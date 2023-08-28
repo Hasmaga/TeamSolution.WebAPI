@@ -43,5 +43,17 @@ namespace TeamSolution.DAO
                 throw;
             }
         }
+
+        public async Task<Role> GetRoleByIdAsync(Guid id)
+        {
+            try
+            {
+                return await _context.Roles.FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

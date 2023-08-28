@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TeamSolution.Enum;
 using TeamSolution.Model.Dto;
 using TeamSolution.Repository.Interface;
 
@@ -16,17 +18,24 @@ namespace TeamSolution.Controllers
         }
 
         // POST: roleapi/createrole
-        [HttpPost("createrole")]
+        [HttpPost("createrole"), Authorize]
         public async Task<IActionResult> CreateRoleAsync(NewRoleReqDto role)
         {
             try
             {
-                return Ok(await _roleRepository.CreateRoleAsync(role));
+                await _roleRepository.CreateRoleAsync(role);
+                return StatusCode(200, "CREATE_ROLE_SUCCESSFULLY");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // return StatusCode(500, "Internal server error");
-                return StatusCode(500);
+                if(e.Message == ErrorCode.USER_IS_EXIST)
+                {
+                    return StatusCode(409, e.Message);
+                }
+                else
+                {
+                    return StatusCode(500, e.Message);
+                }
             }
         }
     }

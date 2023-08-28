@@ -27,14 +27,45 @@ namespace TeamSolution.DAO
             }
         }
 
-        public async Task<bool> GetUserIsExistAsync(string email, string passwordHash)
+        public async Task<User> GetUserByEmailAysnc(string email)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email && x.PasswordHash == passwordHash);
-            if (user != null)
+            try
             {
+                return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<User> GetUserByIdAsync(Guid id)
+        {
+            try
+            {
+                return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> CheckEmailIsExist(string email)
+        {
+            try            
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+                if (user != null)
+                {
+                    return false;
+                }
                 return true;
             }
-            return false;
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

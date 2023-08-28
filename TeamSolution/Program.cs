@@ -1,4 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
 using TeamSolution.DAO;
 using TeamSolution.DAO.Interface;
 using TeamSolution.DatabaseContext;
@@ -13,6 +18,44 @@ builder.Services.AddHttpContextAccessor();
 // Configure SQL Server Connection to Azure SQL Database from appsettings.json
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+
+// Add Identity Service with JWT Token Authentication and Role-based Authorization 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
+// Configure Swagger/OpenAPI 
+builder.Services.AddSwaggerGen(option =>
+{
+    option.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    option.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
+// Add cross-origin resource sharing
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -42,6 +85,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
+
+app.UseAuthentication();
+
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TeamSolution v1"));
 
 app.UseAuthorization();
 

@@ -5,6 +5,8 @@ namespace TeamSolution.DAO.Interface
     public interface IUserDAO
     {        
         Task<bool> CreateUserAsync(User user);
-        Task<bool> GetUserIsExistAsync(string email, string passwordHash);        
+        Task<User> GetUserByEmailAysnc(string email);   
+        Task<User> GetUserByIdAsync(Guid id);
+        Task<bool> CheckEmailIsExist(string email);
     }
 }
