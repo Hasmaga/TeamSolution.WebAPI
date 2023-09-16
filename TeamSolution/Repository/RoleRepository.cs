@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,7 +8,6 @@ using TeamSolution.Enum;
 using TeamSolution.Model;
 using TeamSolution.Model.Dto;
 using TeamSolution.Repository.Interface;
-using static System.Net.WebRequestMethods;
 
 namespace TeamSolution.Repository
 {

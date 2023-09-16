@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Formats.Asn1;
 using TeamSolution.Enum;
 using TeamSolution.Model.Dto;
 using TeamSolution.Repository.Interface;
@@ -80,7 +81,7 @@ namespace TeamSolution.Controllers
             try
             {
                 var token = await _userRepository.LoginAsync(loginReqDto);
-                if (token == null)
+                if (token != null)
                 {
                     return StatusCode(200, "Bearer " + token);
                 } else
@@ -98,6 +99,6 @@ namespace TeamSolution.Controllers
                     return StatusCode(500, e);
                 }
             }
-        }
+        }       
     }
 }

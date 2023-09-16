@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using TeamSolution.Enum;
+using System.Net.Mail;
 
 namespace TeamSolution.Repository
 {
@@ -175,7 +176,15 @@ namespace TeamSolution.Repository
                 ValidateAudience = false                
             }, out SecurityToken validatedToken);
             return validatedToken.ValidTo < DateTime.UtcNow;
-        }        
+        }   
+        
+        // Send email to user
+        private bool SendEmail(string email, string subject, string body)
+        {
+            string mailFrom = _configuration.GetSection("Email:EmailFrom").Value;
+            MailMessage mess = new MailMessage();
+            return true;
+        }
         #endregion        
     }
 }

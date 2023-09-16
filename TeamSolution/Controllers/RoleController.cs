@@ -28,7 +28,7 @@ namespace TeamSolution.Controllers
             }
             catch (Exception e)
             {
-                if(e.Message == ErrorCode.USER_IS_EXIST)
+                if(e.Message == ErrorCode.ROLE_IS_EXIST)
                 {
                     return StatusCode(409, e.Message);
                 }

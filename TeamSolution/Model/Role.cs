@@ -8,5 +8,13 @@ namespace TeamSolution.Model
     {
         [Column("RoleName")]
         public string RoleName { get; set; }
+
+        public ICollection<User> Users { get; set; }    
+
+        public Role(string roleName)
+        {
+            RoleName = roleName;
+        }
+
     }
 }
