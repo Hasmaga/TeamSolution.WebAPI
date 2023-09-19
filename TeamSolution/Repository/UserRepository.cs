@@ -50,17 +50,24 @@ namespace TeamSolution.Repository
                 // Create new account
                 var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
                 var newAcc = new User
-                {
-                    FirstName = acc.FirstName,
-                    LastName = acc.LastName,
-                    Email = acc.Email,
-                    PasswordHash = passwordHash,
-                    PasswordSalt = Convert.ToBase64String(passwordSalt),
-                    ForgotPasswordTimes = 0,
-                    IsActive = true,
-                    PhoneNumber = acc.PhoneNumber,                    
-                    RoleId = await _roleDAO.FindIdByRoleNameAsync("Admin")                    
-                };
+                (
+                    acc.FirstName,
+                    acc.LastName,
+                    acc.Email,
+                    passwordHash,
+                    Convert.ToBase64String(passwordSalt),
+                    acc.PhoneNumber,
+                    true,
+                    0,
+                    await _roleDAO.FindIdByRoleNameAsync("Admin"),
+                    await _roleDAO.FindIdByRoleNameAsync("Active"),
+                    acc.Address,
+                    0,
+                    false,
+                    DateTime.Now,
+                    DateTime.Now,
+                    Guid.Empty
+                );
                 return await _userDAO.CreateUserAsync(newAcc);
             }
             catch (Exception)
@@ -80,17 +87,24 @@ namespace TeamSolution.Repository
                 }
                 var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
                 var newAcc = new User
-                {
-                    FirstName = acc.FirstName,
-                    LastName = acc.LastName,
-                    Email = acc.Email,
-                    PasswordHash = passwordHash,
-                    PasswordSalt = Convert.ToBase64String(passwordSalt),
-                    ForgotPasswordTimes = 0,
-                    IsActive = true,
-                    PhoneNumber = acc.PhoneNumber,
-                    RoleId = await _roleDAO.FindIdByRoleNameAsync("User")
-                };
+                (
+                    acc.FirstName,
+                    acc.LastName,
+                    acc.Email,
+                    passwordHash,
+                    Convert.ToBase64String(passwordSalt),
+                    acc.PhoneNumber,
+                    true,
+                    0,
+                    await _roleDAO.FindIdByRoleNameAsync("User"),
+                    await _roleDAO.FindIdByRoleNameAsync("Active"),
+                    acc.Address,
+                    0,
+                    false,
+                    DateTime.Now,
+                    DateTime.Now,
+                    Guid.Empty
+                );
                 return await _userDAO.CreateUserAsync(newAcc);
             }
             catch (Exception)

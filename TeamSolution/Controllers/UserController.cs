@@ -26,21 +26,21 @@ namespace TeamSolution.Controllers
             {
                 if (await _userRepository.CreateMemberAccAsync(acc))
                 {
-                    return StatusCode(200, "CREATE_USER_SUCCESSFULLY");
+                    return StatusCode(200, SucessfulCode.CREATE_USER_SUCCESSFULLY);
                 }
                 else
                 {
-                    return StatusCode(500, "CREATE_USER_FAIL");
+                    return StatusCode(500, ErrorCode.CREATE_USER_FAIL);
                 }                
             }
             catch (Exception e)
             {
                 if (e.Message == ErrorCode.USER_IS_EXIST)
                 {
-                    return StatusCode(409, e.Message);
+                    return StatusCode(409, ErrorCode.USER_IS_EXIST);
                 } else
                 {
-                    return StatusCode(500, e);
+                    return StatusCode(500, ErrorCode.CREATE_USER_FAIL);
                 }
             }
         }

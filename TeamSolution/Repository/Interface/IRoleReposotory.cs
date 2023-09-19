@@ -1,9 +1,11 @@
-﻿using TeamSolution.Model.Dto;
+﻿using TeamSolution.Model;
+using TeamSolution.Model.Dto;
 
 namespace TeamSolution.Repository.Interface
 {
     public interface IRoleReposotory
     {
         Task<bool> CreateRoleAsync(NewRoleReqDto role);
+        Task<List<Role>> GetAllRoleAsync();
     }
 }

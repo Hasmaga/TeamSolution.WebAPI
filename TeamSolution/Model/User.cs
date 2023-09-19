@@ -61,8 +61,7 @@ namespace TeamSolution.Model
         public ICollection<Order> Orders { get; set; }
         public ICollection<OrderDetail> OrderDetailsBegin { get; set; }
         public ICollection<OrderDetail> OrderDetailsDone { get; set; }
-        public ICollection<ShipperDetail> ShipperDetails { get; set; }
-
+        public ICollection<ShipperDetail> ShipperDetails { get; set; }        
         public User(string firstName, string lastName, string email, string passwordHash, string passwordSalt, string phoneNumber, bool isActive, int forgotPasswordTimes, Guid roleId, Guid statusId, string address, decimal wallet, bool isDelete, DateTime createDateTime, DateTime updateDateTime, Guid storeId)
         {
             FirstName = firstName;

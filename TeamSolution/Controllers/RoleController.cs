@@ -38,5 +38,18 @@ namespace TeamSolution.Controllers
                 }
             }
         }
+
+        [HttpGet("getallrole")]
+        public async Task<IActionResult> GetAllRoleAsync()
+        {
+            try
+            {
+                return StatusCode(200, await _roleRepository.GetAllRoleAsync());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "GET_ALL_ROLE_FAIL");
+            }
+        }
     }
 }

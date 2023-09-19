@@ -8,5 +8,6 @@
         public const string NOT_AUTHORIZED = "NOT_AUTHORIZED";
         public const string ROLE_IS_EXIST = "ROLE_IS_EXIST";
         public const string TOKEN_IS_EXPIRED = "TOKEN_IS_EXPIRED";
+        public const string CREATE_USER_FAIL = "CREATE_USER_FAIL";
     }
 }

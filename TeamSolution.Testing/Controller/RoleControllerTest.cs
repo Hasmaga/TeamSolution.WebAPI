@@ -18,6 +18,7 @@ namespace TeamSolution.Testing.Controller
         { 
             _mockRoleRepo = new Mock<IRoleReposotory>();
         }
+
         [Fact]
         public async Task CreateRoleAsync_WhenCalled_ReturnsOkResult()
         {
@@ -29,6 +30,7 @@ namespace TeamSolution.Testing.Controller
                 .ReturnsAsync(true);
             var result = await _mockRoleRepo.Object.CreateRoleAsync(new NewRoleReqDto());            
             // Assert            
+            Assert.True(result);
         }
     }
 }

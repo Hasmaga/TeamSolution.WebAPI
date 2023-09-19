@@ -27,13 +27,17 @@ namespace TeamSolution.DatabaseContext
             modelBuilder.Entity<Status>()
                 .ToTable("Statuses");
 
-            modelBuilder.Entity<Store>().ToTable("Stores");
+            modelBuilder.Entity<Store>()
+                .ToTable("Stores");
 
-            modelBuilder.Entity<StoreModeSeting>().ToTable("StoreModeSetings");
+            modelBuilder.Entity<StoreModeSeting>()
+                .ToTable("StoreModeSetings");
 
-            modelBuilder.Entity<Role>().ToTable("Roles");
+            modelBuilder.Entity<Role>()
+                .ToTable("Roles");
 
-            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<User>()
+                .ToTable("Users");
 
             modelBuilder.Entity<FeedBack>()
                 .HasKey(f => f.Id);

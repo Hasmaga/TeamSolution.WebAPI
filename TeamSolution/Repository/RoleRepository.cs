@@ -53,6 +53,18 @@ namespace TeamSolution.Repository
             }
         }
 
+        public async Task<List<Role>> GetAllRoleAsync()
+        {
+            try
+            {
+                return await _roleDAO.GetAllRoleAsyncDAO();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         #region Private Methods  
         private Guid GetSidLogged()
         {
@@ -73,7 +85,7 @@ namespace TeamSolution.Repository
                 ValidateAudience = false
             }, out SecurityToken validatedToken);
             return validatedToken.ValidTo < DateTime.UtcNow;
-        }
+        }        
         #endregion
     }
 }
