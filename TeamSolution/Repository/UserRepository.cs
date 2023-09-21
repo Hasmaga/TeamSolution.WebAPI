@@ -19,13 +19,11 @@ namespace TeamSolution.Repository
         private readonly ILogger _logger;
         private readonly IHttpContextAccessor _http;
         private readonly IConfiguration _configuration;
-        private IMapper _mapper;
-        public UserRepository(IUserDAO userDAO, IRoleDAO roleDAO, ILogger<UserRepository> logger, IMapper mapper, IHttpContextAccessor http, IConfiguration configuration)
+        public UserRepository(IUserDAO userDAO, IRoleDAO roleDAO, ILogger<UserRepository> logger, IHttpContextAccessor http, IConfiguration configuration)
         {
             _userDAO = userDAO;
             _roleDAO = roleDAO;
             _logger = logger;
-            _mapper = mapper;
             _http = http;
             _configuration = configuration;
         }
@@ -38,7 +36,9 @@ namespace TeamSolution.Repository
                 // Check conditions
                 var userLogged = await _userDAO.GetUserByIdAsync(GetSidLogged());
                 var Adminrole = await _roleDAO.FindIdByRoleNameAsync("Admin");
-                if (CheckTokenIsExpires(_http.HttpContext.Request.Headers["Authorization"].ToString()) == true                                     
+                if (
+                    _http.HttpContext != null 
+                    && CheckTokenIsExpires(_http.HttpContext.Request.Headers["Authorization"].ToString()) == true                                    
                     && userLogged.RoleId != Adminrole == false)
                 {
                     throw new Exception(ErrorCode.NOT_AUTHORIZED);
@@ -141,6 +141,11 @@ namespace TeamSolution.Repository
 
         private Guid GetSidLogged()
         {
+            if(_http.HttpContext == null)
+            {
+                throw new Exception(ErrorCode.NOT_AUTHORIZED);
+
+            }
             var result = Guid.Parse(_http.HttpContext.User.FindFirstValue(ClaimTypes.Sid));
             return result;
         }

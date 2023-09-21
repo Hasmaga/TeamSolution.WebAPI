@@ -63,10 +63,24 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 // Add Scoped Services DAO
 builder.Services.AddScoped<IRoleDAO, RoleDAO>();
 builder.Services.AddScoped<IUserDAO, UserDAO>();
+builder.Services.AddScoped<IFeedBackDAO, FeedBackDAO>();
+builder.Services.AddScoped<IOrderDAO, OrderDAO>();
+builder.Services.AddScoped<IOrderDetailDAO, OrderDetailDAO>();
+builder.Services.AddScoped<IShipperDetailDAO, ShipperDetailDAO>();
+builder.Services.AddScoped<IStatusDAO, StatusDAO>();
+builder.Services.AddScoped<IStoreDAO, StoreDAO>();
+builder.Services.AddScoped<IStoreModeSetingDAO, StoreModeSetingDAO>();
 
 // Add Scoped Services Repository
 builder.Services.AddScoped<IRoleReposotory, RoleRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFeebBackRepository, FeedBackRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddScoped<IShipperDetailRepository, ShipperDetailRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+builder.Services.AddScoped<IStoreRepository,  StoreRepository>();
+builder.Services.AddScoped<IStoreModeSetingRepository, StoreModeSetingRepository>();
 
 // Add services to the container.
 

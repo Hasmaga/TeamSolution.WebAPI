@@ -8,22 +8,19 @@ using System.Threading.Tasks;
 using TeamSolution.DatabaseContext;
 using TeamSolution.Model;
 using TeamSolution.Model.Dto;
+using TeamSolution.Repository;
 using TeamSolution.Repository.Interface;
+using TeamSolution.Testing.DAO;
 
 namespace TeamSolution.Testing.Repository
 {
-    public class UserRepository
+    public class UserRepositoryTesting
     {
-        private readonly Mock<IUserRepository> _mockUserRepo;
-        private readonly ApplicationDbContext _mockDbcontext;       
-
-        public UserRepository(Mock<IUserRepository> mockUserRepo, Mock<ApplicationDbContext> mockDbcontext)
+        private readonly Mock<UserRepository> _mockUserRepo;
+        private readonly UserDAOTesting _userDAOTesting;
+        public UserRepositoryTesting()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestingDatabase")
-                .Options;
-            _mockUserRepo = mockUserRepo;
-            _mockDbcontext = new ApplicationDbContext(options);
+            _mockUserRepo = new Mock<UserRepository>();
         }
 
         //[Fact]
