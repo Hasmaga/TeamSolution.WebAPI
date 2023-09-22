@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System;
 using System.Text;
 using TeamSolution.DAO;
 using TeamSolution.DAO.Interface;
@@ -18,16 +19,17 @@ builder.Services.AddHttpContextAccessor();
 // Configure SQL Server Connection to Azure SQL Database from appsettings.json
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocalConnection")));
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+//options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
 
-// Add Identity Service with JWT Token Authentication and Role-based Authorization 
+// Add Identity Service with JWT Token Authentication and Role-based Authorization
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Fix Null Reference Exception by checking if configuration is null before accessing GetSection()
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings:Token")?.Value ?? throw new Exception("Invalid Token in configuration"))), // Fix possible null reference argument for parameter 's' in 'byte[] Encoding.GetBytes(string s)'.
             ValidateIssuer = false,
             ValidateAudience = false
         };
@@ -69,18 +71,18 @@ builder.Services.AddScoped<IOrderDetailDAO, OrderDetailDAO>();
 builder.Services.AddScoped<IShipperDetailDAO, ShipperDetailDAO>();
 builder.Services.AddScoped<IStatusDAO, StatusDAO>();
 builder.Services.AddScoped<IStoreDAO, StoreDAO>();
-builder.Services.AddScoped<IStoreModeSetingDAO, StoreModeSetingDAO>();
+builder.Services.AddScoped<IStoreModeSettingDAO, StoreModeSettingDAO>();
 
 // Add Scoped Services Repository
-builder.Services.AddScoped<IRoleReposotory, RoleRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IFeebBackRepository, FeedBackRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
-builder.Services.AddScoped<IShipperDetailRepository, ShipperDetailRepository>();
-builder.Services.AddScoped<IStatusRepository, StatusRepository>();
-builder.Services.AddScoped<IStoreRepository,  StoreRepository>();
-builder.Services.AddScoped<IStoreModeSetingRepository, StoreModeSetingRepository>();
+builder.Services.AddScoped<IRoleReposotory,RoleRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IFeedBackRepository,FeedBackRepository>();
+builder.Services.AddScoped<IOrderRepository,OrderRepository>();
+builder.Services.AddScoped<IOrderDetailRepository,OrderDetailRepository>();
+builder.Services.AddScoped<IShipperDetailRepository,ShipperDetailRepository>();
+builder.Services.AddScoped<IStatusRepository,StatusRepository>();
+builder.Services.AddScoped<IStoreRepository,StoreRepository>();
+builder.Services.AddScoped<IStoreModeSettingRepository,StoreModeSettingRepository>();
 
 // Add services to the container.
 

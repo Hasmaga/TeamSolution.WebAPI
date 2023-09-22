@@ -12,7 +12,6 @@ namespace TeamSolution.Controllers
     public class UserController : Controller
     {
         private readonly IUserRepository _userRepository;
-
         public UserController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -30,7 +29,7 @@ namespace TeamSolution.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, ErrorCode.CREATE_USER_FAIL);
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }                
             }
             catch (Exception e)
@@ -40,7 +39,7 @@ namespace TeamSolution.Controllers
                     return StatusCode(409, ErrorCode.USER_IS_EXIST);
                 } else
                 {
-                    return StatusCode(500, ErrorCode.CREATE_USER_FAIL);
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }
             }
         }
@@ -53,10 +52,10 @@ namespace TeamSolution.Controllers
             {
                 if(await _userRepository.CreateAdminAccAsync(acc))
                 {
-                    return StatusCode(200, "CREATE_USER_SUCCESSFULLY");
+                    return StatusCode(200, SucessfulCode.CREATE_USER_SUCCESSFULLY);
                 } else
                 {
-                    return StatusCode(500, "CREATE_USER_FAIL");
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }                
             }
             catch (Exception e)
@@ -69,7 +68,7 @@ namespace TeamSolution.Controllers
                     return StatusCode(409, e.Message);
                 } else
                 {
-                    return StatusCode(500, e);
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }                         
             }
         }
@@ -86,7 +85,7 @@ namespace TeamSolution.Controllers
                     return StatusCode(200, "Bearer " + token);
                 } else
                 {
-                    return StatusCode(500, "LOGIN_FAIL");
+                    return StatusCode(500, ErrorCode.LOGIN_FAIL);
                 }                                
             }
             catch (Exception e)
@@ -96,7 +95,7 @@ namespace TeamSolution.Controllers
                     return StatusCode(404, e.Message);
                 } else
                 {
-                    return StatusCode(500, e);
+                    return StatusCode(500, e.Message);
                 }
             }
         }       

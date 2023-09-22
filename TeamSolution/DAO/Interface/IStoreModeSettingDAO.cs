@@ -1,6 +1,6 @@
 ﻿namespace TeamSolution.DAO.Interface
 {
-    public interface IStoreModeSetingDAO
+    public interface IStoreModeSettingDAO
     {
     }
 }

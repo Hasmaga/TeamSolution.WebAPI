@@ -1,6 +1,6 @@
 ﻿namespace TeamSolution.Repository.Interface
 {
-    public interface IStoreModeSetingRepository
+    public interface IStoreModeSettingRepository
     {
     }
 }

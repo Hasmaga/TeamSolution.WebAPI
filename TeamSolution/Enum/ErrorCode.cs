@@ -9,5 +9,7 @@
         public const string ROLE_IS_EXIST = "ROLE_IS_EXIST";
         public const string TOKEN_IS_EXPIRED = "TOKEN_IS_EXPIRED";
         public const string CREATE_USER_FAIL = "CREATE_USER_FAIL";
+        public const string GET_ALL_ROLE_FAIL = "GET_ALL_ROLE_FAIL";
+        public const string LOGIN_FAIL = "LOGIN_FAIL";
     }
 }

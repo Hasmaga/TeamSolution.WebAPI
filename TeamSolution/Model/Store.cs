@@ -8,7 +8,7 @@ namespace TeamSolution.Model
     {
         [Column("StoreModeSettingId")]
         public Guid StoreModeSettingId { get; set; }
-        public StoreModeSeting StoreModeSeting { get; set; }
+        public StoreModeSetting StoreModeSeting { get; set; }
 
         [Column("Address")]
         public string Address { get; set; }

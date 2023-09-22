@@ -11,7 +11,6 @@ namespace TeamSolution.Controllers
     public class RoleController : Controller
     {        
         private readonly IRoleReposotory _roleRepository;
-
         public RoleController(IRoleReposotory roleRepository)
         {
             _roleRepository = roleRepository;
@@ -24,7 +23,7 @@ namespace TeamSolution.Controllers
             try
             {
                 await _roleRepository.CreateRoleAsync(role);
-                return StatusCode(200, "CREATE_ROLE_SUCCESSFULLY");
+                return StatusCode(200, SucessfulCode.CREATE_ROLE_SUCCESSFULLY);
             }
             catch (Exception e)
             {
@@ -34,7 +33,7 @@ namespace TeamSolution.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, e.Message);
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }
             }
         }
@@ -48,7 +47,7 @@ namespace TeamSolution.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "GET_ALL_ROLE_FAIL");
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
     }

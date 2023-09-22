@@ -30,7 +30,7 @@ namespace TeamSolution.DatabaseContext
             modelBuilder.Entity<Store>()
                 .ToTable("Stores");
 
-            modelBuilder.Entity<StoreModeSeting>()
+            modelBuilder.Entity<StoreModeSetting>()
                 .ToTable("StoreModeSetings");
 
             modelBuilder.Entity<Role>()
@@ -57,7 +57,7 @@ namespace TeamSolution.DatabaseContext
             modelBuilder.Entity<Store>()
                 .HasKey(s => s.Id);
             
-            modelBuilder.Entity<StoreModeSeting>()
+            modelBuilder.Entity<StoreModeSetting>()
                 .HasKey(sms => sms.Id);
             
             modelBuilder.Entity<Role>()
@@ -168,7 +168,7 @@ namespace TeamSolution.DatabaseContext
         public DbSet<ShipperDetail> ShipperDetails { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Store> Stores { get; set; }
-        public DbSet<StoreModeSeting> StoreModeSetings { get; set; }
+        public DbSet<StoreModeSetting> StoreModeSetings { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
     }
