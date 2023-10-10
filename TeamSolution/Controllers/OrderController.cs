@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSolution.Repository.Interface;
+using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Controllers
 {
@@ -7,10 +7,10 @@ namespace TeamSolution.Controllers
     [ApiController]
     public class OrderController : Controller
     {
-        private readonly IOrderRepository _orderRepository;
-        public OrderController(IOrderRepository orderRepository)
+        private readonly IOrderService _orderService;
+        public OrderController(IOrderService orderService)
         {
-            _orderRepository = orderRepository;
+            _orderService = orderService;
         }
     }
 }

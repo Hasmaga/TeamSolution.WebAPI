@@ -1,20 +1,15 @@
-﻿using TeamSolution.DAO.Interface;
-using TeamSolution.Model;
-using TeamSolution.Repository.Interface;
+﻿using TeamSolution.Repository.Interface;
+using TeamSolution.DatabaseContext;
 
 namespace TeamSolution.Repository
 {
     public class StoreRepository : IStoreRepository
     {
-        private readonly IStoreDAO _storeDAO;
-        public StoreRepository(IStoreDAO storeDAO)
-        {
-            _storeDAO = storeDAO;
-        }
+        private readonly ApplicationDbContext _context;
 
-        public Task<Store> GetAllStore()
+        public StoreRepository(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
     }
 }

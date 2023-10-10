@@ -1,91 +1,83 @@
-﻿using AutoMapper;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using TeamSolution.DAO.Interface;
-using TeamSolution.Enum;
-using TeamSolution.Model;
-using TeamSolution.Model.Dto;
+﻿using Microsoft.EntityFrameworkCore;
 using TeamSolution.Repository.Interface;
+using TeamSolution.DatabaseContext;
+using TeamSolution.Model;
 
 namespace TeamSolution.Repository
 {
-    public class RoleRepository : IRoleReposotory
+    public class RoleRepository : IRoleRepository
     {
-        private readonly IRoleDAO _roleDAO;
-        private readonly IUserDAO _userDAO;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        private readonly IHttpContextAccessor _http;
-        private readonly IConfiguration _configuration;
-        private IMapper _mapper;
-        public RoleRepository(IRoleDAO roleDAO, IUserDAO userDAO, ILogger<RoleRepository> logger, IMapper mapper, IHttpContextAccessor http, IConfiguration configuration)
+
+        public RoleRepository(ApplicationDbContext context, ILogger<RoleRepository> logger)
         {
-            _roleDAO = roleDAO;
-            _userDAO = userDAO;
+            _context = context;
             _logger = logger;
-            _mapper = mapper;
-            _http = http;
-            _configuration = configuration;
         }
 
-        public async Task<bool> CreateRoleAsync(NewRoleReqDto role)
+        public async Task<bool> CreateRoleDAOAsync(Role role)
         {
             try
             {
-                _logger.LogInformation("CreateRoleAsync: "+ role.RoleName);
-                var userLogged = await _userDAO.GetUserByIdAsync(GetSidLogged());
-                var Adminrole = await _roleDAO.FindIdByRoleNameAsync("Admin");
-                if (CheckTokenIsExpires(_http.HttpContext.Request.Headers["Authorization"].ToString()) == true
-                    && userLogged.RoleId != Adminrole == false)
-                {
-                    throw new Exception(ErrorCode.NOT_AUTHORIZED);
-                }
-                if (await _roleDAO.FindIdByRoleNameAsync(role.RoleName) != Guid.Empty)
-                {
-                    throw new Exception(ErrorCode.ROLE_IS_EXIST);
-                }
-                return await _roleDAO.CreateRoleDAOAsync(_mapper.Map<Role>(role));
+                _logger.LogInformation("CreateRoleDAOAsync: " + role.RoleName);
+                await _context.Roles.AddAsync(role);
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception)
             {
+                _logger.LogError("Error create role: " + role.RoleName);
                 throw;
             }
         }
 
-        public async Task<List<Role>> GetAllRoleAsync()
+        public async Task<Guid> FindIdByRoleNameAsync(string roleName)
         {
             try
             {
-                return await _roleDAO.GetAllRoleAsyncDAO();
+                _logger.LogInformation("FindIdByRoleNameAsync: " + roleName);
+                var role = await _context.Roles.FirstOrDefaultAsync(x => x.RoleName == roleName);
+                if (role != null)
+                {
+                    return role.Id;
+                }
+                return Guid.Empty;
             }
             catch (Exception)
             {
+                _logger.LogInformation("Error find role: " + roleName);
                 throw;
             }
         }
 
-        #region Private Methods  
-        private Guid GetSidLogged()
+        // Get all role in database
+        public async Task<List<Role>> GetAllRoleAsyncDAO()
         {
-            var result = Guid.Parse(_http.HttpContext.User.FindFirstValue(ClaimTypes.Sid));
-            return result;
-        }
-        private bool CheckTokenIsExpires(string token)
-        {
-            // remove bearer from token
-            token = token.Substring(7);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            try
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = false,
-                ValidateAudience = false
-            }, out SecurityToken validatedToken);
-            return validatedToken.ValidTo < DateTime.UtcNow;
-        }        
-        #endregion
+                _logger.LogInformation("GetAllRoleAsyncDAO");
+                return await _context.Roles.ToListAsync();
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error get all role");
+                throw;
+            }
+        }
+
+        public async Task<Role> GetRoleByIdAsync(Guid id)
+        {
+            try
+            {
+                _logger.LogInformation("GetRoleByIdAsync: " + id);
+                return await _context.Roles.FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error get role by id: " + id);
+                throw;
+            }
+        }
     }
 }

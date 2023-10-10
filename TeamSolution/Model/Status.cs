@@ -15,10 +15,9 @@ namespace TeamSolution.Model
         [Column("Description")]
         public string Description { get; set; }
 
-        public ICollection<OrderDetail> OrderDetails { get; set; }
-        public ICollection<ShipperDetail> ShipperDetails { get; set; }
-        public ICollection<User> Users { get; set; }
-        public ICollection<Store> Stores { get; set; }
+        // Relationship
+        public ICollection<Account> Accounts { get; set; }
+        public ICollection<Order> Orders { get; set; }
 
         public Status(string statusName, bool isDeleted, string description)
         {

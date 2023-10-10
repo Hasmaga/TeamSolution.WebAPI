@@ -9,12 +9,19 @@ namespace TeamSolution.Model
         [Column("RoleName")]
         public string RoleName { get; set; }
 
-        public ICollection<User> Users { get; set; }    
+        [Column("CreateDateTime")]
+        public DateTime CreateDateTime { get; set; }
 
-        public Role(string roleName)
+        [Column("UpdateDateTime")]
+        public DateTime? UpdateDateTime { get; set; }
+
+        public ICollection<Account> Accounts { get; set; }
+
+        public Role(string roleName, DateTime createDateTime, DateTime? updateDateTime)
         {
             RoleName = roleName;
+            CreateDateTime = createDateTime;
+            UpdateDateTime = updateDateTime;
         }
-
     }
 }

@@ -1,21 +1,15 @@
-﻿using TeamSolution.DAO.Interface;
-using TeamSolution.Model;
-using TeamSolution.Repository.Interface;
+﻿using TeamSolution.Repository.Interface;
+using TeamSolution.DatabaseContext;
 
 namespace TeamSolution.Repository
 {
     public class FeedBackRepository : IFeedBackRepository
     {
-        private readonly IFeedBackDAO _feedBackDAO;
+        private readonly ApplicationDbContext _context;
 
-        public FeedBackRepository(IFeedBackDAO feedBackDAO)
+        public FeedBackRepository(ApplicationDbContext context)
         {
-            _feedBackDAO = feedBackDAO;
-        }
-
-        public Task<FeedBack> GetFeedBackById(Guid id)
-        {
-            throw new NotImplementedException();
+            _context = context;
         }
     }
 }

@@ -1,23 +1,19 @@
-﻿using TeamSolution.DAO.Interface;
+﻿using TeamSolution.Repository.Interface;
+using TeamSolution.DatabaseContext;
 using TeamSolution.Model;
-using TeamSolution.Repository.Interface;
 
 namespace TeamSolution.Repository
 {
     public class OrderDetailRepository : IOrderDetailRepository
     {
-        private readonly IOrderDetailDAO _orderDetailDAO;
-        public OrderDetailRepository(IOrderDetailDAO orderDetailDAO)
+        private readonly ApplicationDbContext _context;
+
+        public OrderDetailRepository(ApplicationDbContext context)
         {
-            _orderDetailDAO = orderDetailDAO;
+            _context = context;
         }
 
-        public async Task<OrderDetail> GetOrderDetailById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<OrderDetail> IOrderDetailRepository.GetOrderDetailById(int id)
+        public Task<OrderDetail> GetOrderDetailById(int id)
         {
             throw new NotImplementedException();
         }

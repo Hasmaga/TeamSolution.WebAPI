@@ -3,13 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using System;
 using System.Text;
-using TeamSolution.DAO;
-using TeamSolution.DAO.Interface;
 using TeamSolution.DatabaseContext;
 using TeamSolution.Repository;
 using TeamSolution.Repository.Interface;
+using TeamSolution.Service;
+using TeamSolution.Service.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,26 +62,32 @@ builder.Services.AddCors(options =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Add Scoped Services DAO
-builder.Services.AddScoped<IRoleDAO, RoleDAO>();
-builder.Services.AddScoped<IUserDAO, UserDAO>();
-builder.Services.AddScoped<IFeedBackDAO, FeedBackDAO>();
-builder.Services.AddScoped<IOrderDAO, OrderDAO>();
-builder.Services.AddScoped<IOrderDetailDAO, OrderDetailDAO>();
-builder.Services.AddScoped<IShipperDetailDAO, ShipperDetailDAO>();
-builder.Services.AddScoped<IStatusDAO, StatusDAO>();
-builder.Services.AddScoped<IStoreDAO, StoreDAO>();
-builder.Services.AddScoped<IStoreModeSettingDAO, StoreModeSettingDAO>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<ICustomerComplainStoreRepository, CustomerComplainStoreRepository>();
+builder.Services.AddScoped<IFeedBackRepository, FeedBackRepository>();
+builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IShipperReportIssueTourRepository, ShipperReportIssueTourRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+builder.Services.AddScoped<IStoreRepository, StoreRepository>();
+builder.Services.AddScoped<IStoreServiceRepository, StoreServiceRepository>();
+builder.Services.AddScoped<ITourShipperRepository, TourShipperRepository>();
 
 // Add Scoped Services Repository
-builder.Services.AddScoped<IRoleReposotory,RoleRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
-builder.Services.AddScoped<IFeedBackRepository,FeedBackRepository>();
-builder.Services.AddScoped<IOrderRepository,OrderRepository>();
-builder.Services.AddScoped<IOrderDetailRepository,OrderDetailRepository>();
-builder.Services.AddScoped<IShipperDetailRepository,ShipperDetailRepository>();
-builder.Services.AddScoped<IStatusRepository,StatusRepository>();
-builder.Services.AddScoped<IStoreRepository,StoreRepository>();
-builder.Services.AddScoped<IStoreModeSettingRepository,StoreModeSettingRepository>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICustomerComplainStoreService, CustomerComplainStoreService>();
+builder.Services.AddScoped<IFeedBackService, FeedBackService>();
+builder.Services.AddScoped<IIssueService, IssueService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IShipperReportIssueTourService, ShipperReportIssueTourService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
+builder.Services.AddScoped<IStoreService, StoreService>();
+builder.Services.AddScoped<IStoreServiceService, StoreServiceService>();
+builder.Services.AddScoped<ITourShipperService, TourShipperService>();
 
 // Add services to the container.
 

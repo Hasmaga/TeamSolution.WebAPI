@@ -1,14 +1,15 @@
-﻿using TeamSolution.DAO.Interface;
-using TeamSolution.Repository.Interface;
+﻿using TeamSolution.Repository.Interface;
+using TeamSolution.DatabaseContext;
 
 namespace TeamSolution.Repository
 {
     public class StatusRepository : IStatusRepository
     {
-        private readonly IStatusDAO _statusDAO;
-        public StatusRepository(IStatusDAO statusDAO)
+        private readonly ApplicationDbContext _context;
+
+        public StatusRepository(ApplicationDbContext context)
         {
-            _statusDAO = statusDAO;
+            _context = context;
         }
     }
 }

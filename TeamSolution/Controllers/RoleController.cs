@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TeamSolution.Enum;
 using TeamSolution.Model.Dto;
-using TeamSolution.Repository.Interface;
+using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Controllers
 {
@@ -10,10 +10,10 @@ namespace TeamSolution.Controllers
     [ApiController]
     public class RoleController : Controller
     {        
-        private readonly IRoleReposotory _roleRepository;
-        public RoleController(IRoleReposotory roleRepository)
+        private readonly IRoleService _roleService;
+        public RoleController(IRoleService roleService)
         {
-            _roleRepository = roleRepository;
+            _roleService = roleService;
         }
 
         // POST: roleapi/createrole
@@ -22,7 +22,7 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                await _roleRepository.CreateRoleAsync(role);
+                await _roleService.CreateRoleAsync(role);
                 return StatusCode(200, SucessfulCode.CREATE_ROLE_SUCCESSFULLY);
             }
             catch (Exception e)
@@ -43,7 +43,7 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                return StatusCode(200, await _roleRepository.GetAllRoleAsync());
+                return StatusCode(200, await _roleService.GetAllRoleAsync());
             }
             catch (Exception)
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamSolution.Repository.Interface;
+using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Controllers
 {
@@ -7,10 +8,10 @@ namespace TeamSolution.Controllers
     [ApiController]
     public class StatusController : Controller
     {
-        private readonly IStatusRepository _statusRepository;
-        public StatusController(IStatusRepository statusRepository)
+        private readonly IStatusService _statusService;
+        public StatusController(IStatusService statusService)
         {
-            _statusRepository = statusRepository;
+            _statusService = statusService;
         }
     }
 }

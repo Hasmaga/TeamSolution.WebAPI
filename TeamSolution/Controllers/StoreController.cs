@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSolution.Repository.Interface;
+using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Controllers
 {
@@ -7,10 +7,10 @@ namespace TeamSolution.Controllers
     [ApiController]
     public class StoreController : Controller
     {
-        private readonly IStoreRepository _storeRepository;
-        public StoreController(IStoreRepository storeRepository)
+        private readonly IStoreService _storeService;
+        public StoreController(IStoreService storeService)
         {
-            _storeRepository = storeRepository;
+            _storeService = storeService;
         }
     }
 }

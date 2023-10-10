@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSolution.Repository.Interface;
+using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Controllers
 {
@@ -7,10 +7,10 @@ namespace TeamSolution.Controllers
     [ApiController]
     public class FeedBackController : Controller
     {
-        private readonly IFeedBackRepository _feedBackRepository;
-        public FeedBackController(IFeedBackRepository feedBackRepository)
+        private readonly IFeedBackService _feedBackService;
+        public FeedBackController(IFeedBackService feedBackService)
         {
-            _feedBackRepository = feedBackRepository;
+            _feedBackService = feedBackService;
         }
     }
 }

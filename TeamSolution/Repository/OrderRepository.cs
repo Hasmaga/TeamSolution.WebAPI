@@ -1,14 +1,15 @@
-﻿using TeamSolution.DAO.Interface;
-using TeamSolution.Repository.Interface;
+﻿using TeamSolution.Repository.Interface;
+using TeamSolution.DatabaseContext;
 
 namespace TeamSolution.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly IOrderDAO _orderDAO;
-        public OrderRepository(IOrderDAO orderDAO)
+        private readonly ApplicationDbContext _context;
+
+        public OrderRepository(ApplicationDbContext context)
         {
-            _orderDAO = orderDAO;
+            _context = context;
         }
     }
 }
