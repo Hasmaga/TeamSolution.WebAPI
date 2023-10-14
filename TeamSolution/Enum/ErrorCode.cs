@@ -11,5 +11,9 @@
         public const string CREATE_USER_FAIL = "CREATE_USER_FAIL";
         public const string GET_ALL_ROLE_FAIL = "GET_ALL_ROLE_FAIL";
         public const string LOGIN_FAIL = "LOGIN_FAIL";
+        public const string SEND_EMAIL_ERROR = "SEND_EMAIL_ERROR";
+        public const string OTP_CODE_NOT_FOUND = "OTP_CODE_NOT_FOUND";
+        public const string OTP_CODE_EXPIRED = "OTP_CODE_EXPIRED";
+        public const string OTP_CODE_NOT_MATCH = "OTP_CODE_NOT_MATCH";
     }
 }

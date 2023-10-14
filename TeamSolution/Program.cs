@@ -88,6 +88,7 @@ builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IStoreService, StoreService>();
 builder.Services.AddScoped<IStoreServiceService, StoreServiceService>();
 builder.Services.AddScoped<ITourShipperService, TourShipperService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add services to the container.
 

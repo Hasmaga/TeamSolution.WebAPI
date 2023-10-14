@@ -64,6 +64,15 @@ namespace TeamSolution.Model
         [Column("StoreId")]
         public Guid? StoreId { get; set; } = null;
 
+        [Column("OtpCode")]
+        public string? OtpCode { get; set; } = null;
+
+        [Column("OtpCodeCreated")]
+        public DateTime? OtpCodeCreated { get; set; } = null;
+
+        [Column("OtpCodeExpired")]
+        public DateTime? OtpCodeExpired { get; set; } = null;
+
         // Relationship
         public Role Role { get; set; }        
         public Store Store { get; set;} 
@@ -77,14 +86,18 @@ namespace TeamSolution.Model
 
 
         // Constructor
+        public Account()
+        {
+        }
 
-        #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.                    
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.                    
         public Account(
-            string firstName, string lastName, string email, string passwordHash, string passwordSalt, 
-            string? phoneNumber, bool isActive, int forgotPasswordTimes, Guid roleId, Guid? statusId, 
-            string? address, decimal? wallet, bool isDelete, DateTime createDateTime, DateTime? updateDateTime, 
-            int? shipperPerformance, bool? shipperAvalability, DateTime? deleteDateTime, Guid? storeId)
-        #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+            string firstName, string lastName, string email, string passwordHash, string passwordSalt,
+            string? phoneNumber, bool isActive, int forgotPasswordTimes, Guid roleId, Guid? statusId,
+            string? address, decimal? wallet, bool isDelete, DateTime createDateTime, DateTime? updateDateTime,
+            int? shipperPerformance, bool? shipperAvalability, DateTime? deleteDateTime, Guid? storeId,
+            string? otpCode, DateTime? otpCodeExpired, DateTime? otpCodeCreated)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             FirstName = firstName;
             LastName = lastName;
@@ -100,11 +113,14 @@ namespace TeamSolution.Model
             Wallet = wallet;
             IsDelete = isDelete;
             CreateDateTime = createDateTime;
-            UpdateDateTime = updateDateTime;            
+            UpdateDateTime = updateDateTime;
             ShipperPerformance = shipperPerformance;
             ShipperAvalability = shipperAvalability;
             DeleteDateTime = deleteDateTime;
             StoreId = storeId;
+            OtpCode = otpCode;
+            OtpCodeExpired = otpCodeExpired;
+            OtpCodeCreated = otpCodeCreated;
         }
     }
 }

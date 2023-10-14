@@ -15,56 +15,77 @@ namespace TeamSolution.Service
     public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IStatusRepository _statusRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly ILogger _logger;
         private readonly IHttpContextAccessor _http;
         private readonly IConfiguration _configuration;
-        public AccountService(IAccountRepository accountRepository, IRoleRepository roleRepository, ILogger<AccountService> logger, IHttpContextAccessor http, IConfiguration configuration)
+        private readonly IEmailService _emailService;
+        public AccountService(
+            IAccountRepository accountRepository, 
+            IRoleRepository roleRepository, 
+            ILogger<AccountService> logger, 
+            IHttpContextAccessor http, 
+            IConfiguration configuration,
+            IStatusRepository statusRepository,
+            IEmailService emailService)
         {
             _accountRepository = accountRepository;
             _roleRepository = roleRepository;
             _logger = logger;
             _http = http;
             _configuration = configuration;
+            _statusRepository = statusRepository;
+            _emailService = emailService;
         }
 
-        public async Task<bool> CreateAdminAccAsync(NewAccReqDto acc)
+        public async Task<bool> CreateAdminAccAsync(CreateNewCustomerReqDto acc)
         {
             try
             {
-                //_logger.LogInformation("CreateAdminAccAsync: "+ acc.Email);
-                //// Check conditions
-                //var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
-                //var Adminrole = await _roleRepository.FindIdByRoleNameAsync("Admin");
-                //if (
-                //    _http.HttpContext != null 
-                //    && CheckTokenIsExpires(_http.HttpContext.Request.Headers["Authorization"].ToString()) == true                                    
-                //    && userLogged.RoleId != Adminrole == false)
-                //{
-                //    throw new Exception(ErrorCode.NOT_AUTHORIZED);
-                //}                      
-                //if (!await _accountRepository.CheckEmailIsExist(acc.Email))
-                //{
-                //    throw new Exception(ErrorCode.USER_IS_EXIST);
-                //}
-                //// Create new account
-                //var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
-                //var newAcc = new Account
-                //{
-                //    FirstName = acc.FirstName,
-                //    LastName = acc.LastName,
-                //    Email = acc.Email,
-                //    PasswordHash = passwordHash,
-                //    PasswordSalt = Convert.ToBase64String(passwordSalt),
-                //    PhoneNumber = acc.PhoneNumber,
-                //    RoleId = await _roleRepository.FindIdByRoleNameAsync("Admin"),
-                //    StatusId = await _roleRepository.FindIdByRoleNameAsync("Active"),
-                //    Address = acc.Address,
-                //    CreateDateTime = DateTime.Now
-                //};
-                
-                //return await _accountRepository.CreateUserAsync(newAcc);
-                throw new NotImplementedException();
+                _logger.LogInformation("CreateAdminAccAsync: " + acc.Email);
+                // Check conditions
+                var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                var Adminrole = await _roleRepository.FindIdByRoleNameAsync("Admin");
+                if (
+                    _http.HttpContext != null
+                    && CheckTokenIsExpires(_http.HttpContext.Request.Headers["Authorization"].ToString()) == true
+                    && userLogged.RoleId != Adminrole == false)
+                {
+                    throw new Exception(ErrorCode.NOT_AUTHORIZED);
+                }
+                if (!await _accountRepository.CheckEmailIsExist(acc.Email))
+                {
+                    throw new Exception(ErrorCode.USER_IS_EXIST);
+                }
+                // Create new account
+                var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
+                var newAcc = new Account
+                (
+                    firstName: acc.FirstName,
+                    lastName: acc.LastName,
+                    email: acc.Email,
+                    passwordHash: passwordHash,
+                    passwordSalt: Convert.ToBase64String(passwordSalt),
+                    phoneNumber: acc.PhoneNumber,
+                    isActive: false,
+                    forgotPasswordTimes: 0,
+                    roleId: await _roleRepository.FindIdByRoleNameAsync("Admin"),
+                    statusId: await _statusRepository.FindIdByStatusNameAsync("ACTIVED"),
+                    address: acc.Address,
+                    wallet: null,
+                    isDelete: false,
+                    createDateTime: DateTime.Now,
+                    updateDateTime: null,
+                    shipperPerformance: null,
+                    shipperAvalability: null,
+                    deleteDateTime: null,
+                    storeId: null,
+                    otpCode: null,
+                    otpCodeCreated: null,
+                    otpCodeExpired: null
+                );
+                return await _accountRepository.CreateUserAsync(newAcc);                
             }
             catch (Exception)
             {
@@ -72,32 +93,59 @@ namespace TeamSolution.Service
             }
         }     
 
-        public async Task<bool> CreateMemberAccAsync(NewAccReqDto acc)
+        public async Task<string> CreateMemberAccAsync(CreateNewCustomerReqDto acc)
         {
             try
             {
-                //_logger.LogInformation("CreateMemberAccAsync: "+ acc.Email);
-                //if (!await _accountRepository.CheckEmailIsExist(acc.Email))
-                //{
-                //    throw new Exception(ErrorCode.USER_IS_EXIST);
-                //}
-                //var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
-                //var newAcc = new Account
-                //{
-                //    FirstName = acc.FirstName,
-                //    LastName = acc.LastName,
-                //    Email = acc.Email,
-                //    PasswordHash = passwordHash,
-                //    PasswordSalt = Convert.ToBase64String(passwordSalt),
-                //    PhoneNumber = acc.PhoneNumber,
-                //    RoleId = await _roleRepository.FindIdByRoleNameAsync("Customer"),
-                //    StatusId = await _roleRepository.FindIdByRoleNameAsync("Active"),
-                //    Address = acc.Address,
-                //    CreateDateTime = DateTime.Now
-                //};
-                //return await _accountRepository.CreateUserAsync(newAcc);
+                _logger.LogInformation("CreateMemberAccAsync: " + acc.Email);
+                if (!await _accountRepository.CheckEmailIsExist(acc.Email))
+                {
+                    throw new Exception(ErrorCode.USER_IS_EXIST);
+                }
+                var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
 
-                throw new NotImplementedException();
+                // Create new otp code
+                var otpCode = GenerateOtpCode();
+
+                var newAcc = new Account
+                (
+                    firstName: acc.FirstName,
+                    lastName: acc.LastName,
+                    email: acc.Email,
+                    passwordHash: passwordHash,
+                    passwordSalt: Convert.ToBase64String(passwordSalt),
+                    phoneNumber: acc.PhoneNumber,
+                    isActive: false,
+                    forgotPasswordTimes: 0,
+                    roleId: await _roleRepository.FindIdByRoleNameAsync("Customer"),
+                    statusId: await _statusRepository.FindIdByStatusNameAsync("NOT_VALIDATED"),
+                    address: acc.Address,
+                    wallet: null,
+                    isDelete: false,
+                    createDateTime: DateTime.Now,
+                    updateDateTime: null,
+                    shipperPerformance: null,
+                    shipperAvalability: null,
+                    deleteDateTime: null,
+                    storeId: null,
+                    otpCode: otpCode,
+                    otpCodeCreated: DateTime.UtcNow,
+                    otpCodeExpired: DateTime.UtcNow.AddMinutes(5)
+                );
+
+                // Send otp code to email
+                var subject = "OTP Code";
+                var body = "Your OTP Code is: " + otpCode;
+                await _emailService.SendEmail(subject, body, acc.Email);
+                
+                if (await _accountRepository.CreateUserAsync(newAcc))
+                {
+                    return CreateBearerToken(newAcc);                    
+                } 
+                else
+                {
+                    throw new Exception(ErrorCode.SERVER_ERROR);
+                }               
             }
             catch (Exception)
             {
@@ -109,8 +157,18 @@ namespace TeamSolution.Service
         {
             try
             {
+                var user = new Account();
+                // Check login with email or phone number
+                if (login.Email == null)
+                {
+                    user = await _accountRepository.GetUserByPhoneNumberAysnc(login.PhoneNumber);
+                    if (user == null || !VerifyPasswordHash(login.Password, Convert.FromBase64String(user.PasswordHash), Convert.FromBase64String(user.PasswordSalt)))
+                        throw new Exception(ErrorCode.USER_NOT_FOUND);
+                    return CreateBearerToken(user);
+                } 
                 _logger.LogInformation("LoginAsync: "+ login.Email);
-                var user = await _accountRepository.GetUserByEmailAysnc(login.Email);
+                user = await _accountRepository.GetUserByEmailAysnc(login.Email);
+                // Check conditions when user not found, password not match 
                 if (user == null || !VerifyPasswordHash(login.Password, Convert.FromBase64String(user.PasswordHash), Convert.FromBase64String(user.PasswordSalt))) 
                     throw new Exception(ErrorCode.USER_NOT_FOUND);                
                 return CreateBearerToken(user);
@@ -119,6 +177,110 @@ namespace TeamSolution.Service
             {
                 throw;
             }
+        }
+
+        // Validate account by otp code 
+        public async Task<bool> ValidateAcccountByOtpCodeAsync(string optCode)
+        {
+            _logger.LogInformation("ValidateAcccountByOtpCodeAsync");
+            try
+            {
+                // Get user by id
+                var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());                
+                if (user == null)
+                {
+                    throw new Exception(ErrorCode.USER_NOT_FOUND);
+                }
+                if (user.OtpCode == null)
+                {
+                    throw new Exception(ErrorCode.OTP_CODE_NOT_FOUND);
+                }
+                if (user.OtpCode != optCode)
+                {
+                    throw new Exception(ErrorCode.OTP_CODE_NOT_MATCH);
+                }
+                if (user.OtpCodeExpired < DateTime.UtcNow)
+                {
+                    throw new Exception(ErrorCode.OTP_CODE_EXPIRED);
+                }
+                user.StatusId = await _statusRepository.FindIdByStatusNameAsync("ACTIVED");
+                user.OtpCode = null;
+                user.OtpCodeCreated = null;
+                user.OtpCodeExpired = null;
+                return await _accountRepository.UpdateUserAsync(user);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> GetStatusAccountAsync()
+        {
+            _logger.LogInformation("GetStatusAccountByBearerTokenAsync");
+            try
+            {
+                var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                if (user == null)
+                {
+                    throw new Exception(ErrorCode.USER_NOT_FOUND);
+                }
+                if (user.StatusId == await _statusRepository.FindIdByStatusNameAsync("ACTIVED"))
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<GetProfileCustomerReqDto> GetProfileCustomerAsync()
+        {
+            _logger.LogInformation("GetProfileCustomerAsync");
+            try
+            {
+                var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                if (user == null)
+                {
+                    throw new Exception(ErrorCode.USER_NOT_FOUND);
+                }
+                var result = new GetProfileCustomerReqDto
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,                    
+                };
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // Create new otp code and send to email case user forgot password or want to change password
+        public async Task<bool> GenerateOtpAccountAndSendToEmail()
+        {
+            _logger.LogInformation("GenerateOtpAccountAndSendToEmail");
+            var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+            if (user == null)
+            {
+                throw new Exception(ErrorCode.USER_NOT_FOUND);
+            }
+            var otpCode = GenerateOtpCode();
+            user.OtpCode = otpCode;
+            user.OtpCodeCreated = DateTime.UtcNow;
+            user.OtpCodeExpired = DateTime.UtcNow.AddMinutes(5);
+            await _accountRepository.UpdateUserAsync(user);
+            var subject = "OTP Code";
+            var body = "Your OTP Code is: " + otpCode;
+            await _emailService.SendEmail(subject, body, user.Email);
+            return true;           
         }
 
         #region Private Methods
@@ -132,14 +294,13 @@ namespace TeamSolution.Service
         }
 
         private Guid GetSidLogged()
-        {
-            if(_http.HttpContext == null)
+        {            
+            var sid = _http.HttpContext.User.FindFirst(ClaimTypes.Sid).Value;
+            if (sid == null)
             {
-                throw new Exception(ErrorCode.NOT_AUTHORIZED);
-
+                throw new Exception(ErrorCode.USER_NOT_FOUND);
             }
-            var result = Guid.Parse(_http.HttpContext.User.FindFirstValue(ClaimTypes.Sid));
-            return result;
+            return Guid.Parse(sid);            
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
@@ -187,15 +348,14 @@ namespace TeamSolution.Service
                 ValidateAudience = false                
             }, out SecurityToken validatedToken);
             return validatedToken.ValidTo < DateTime.UtcNow;
-        }   
-        
-        // Send email to user
-        private bool SendEmail(string email, string subject, string body)
+        }        
+
+        // Create otp code
+        private string GenerateOtpCode()
         {
-            string mailFrom = _configuration.GetSection("Email:EmailFrom").Value;
-            MailMessage mess = new MailMessage();
-            return true;
-        }
-        #endregion        
+            var otpCode = new Random().Next(100000, 999999).ToString();
+            return otpCode;
+        }        
+        #endregion
     }
 }

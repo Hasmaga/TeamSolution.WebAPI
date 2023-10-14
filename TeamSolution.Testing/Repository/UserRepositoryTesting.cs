@@ -44,7 +44,10 @@ namespace TeamSolution.Testing.DAO
                 null,
                 null,
                 null,
-                null                
+                null,
+                null,
+                null,
+                null
                 );
             //Act
             await _accountRepository.CreateUserAsync(user);
@@ -72,6 +75,9 @@ namespace TeamSolution.Testing.DAO
                  0,
                  false,
                  DateTime.Now,
+                 null,
+                 null,
+                 null,
                  null,
                  null,
                  null,

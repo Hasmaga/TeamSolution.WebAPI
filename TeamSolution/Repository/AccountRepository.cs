@@ -67,5 +67,31 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+
+        public async Task<bool> UpdateUserAsync(Account user)
+        {
+            try
+            {
+                _context.Accounts.Update(user);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Account> GetUserByPhoneNumberAysnc(string phoneNumber)
+        {
+            try
+            {
+                return await _context.Accounts.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
