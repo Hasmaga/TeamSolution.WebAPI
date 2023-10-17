@@ -48,15 +48,32 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 // Add cross-origin resource sharing
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", builder =>
+//    {
+//        builder.AllowAnyOrigin()
+//               .AllowAnyMethod()
+//               .AllowAnyHeader();
+//    });
+//});
+
+//// Config shake hand with android studio for trust certificate
+//builder.Services.AddHttpClient("android", client =>
+//{
+//    client.BaseAddress = new Uri("https://localhost:7243/");
+//    client.DefaultRequestHeaders.Add("Accept", "application/json");
+//}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+//{
+//    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+//    {
+//        return true;
+//    }
+//});
+
+
+   
+
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -108,7 +125,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+//app.UseCors("AllowAll");
 
 app.UseAuthentication();
 

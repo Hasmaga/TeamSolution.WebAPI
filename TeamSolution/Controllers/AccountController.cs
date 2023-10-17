@@ -102,7 +102,7 @@ namespace TeamSolution.Controllers
 
         // GET: userapi/validateotpcode
         [Authorize]
-        [HttpGet("validateotpcode")]
+        [HttpPost("validateotpcode")]
         public async Task<IActionResult> ValidateAcccountByOtpCodeAsync(string otpCode)
         {
             try
@@ -146,6 +146,28 @@ namespace TeamSolution.Controllers
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }                
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
+        [HttpGet("GetProfile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfileUser()
+        {
+            try
+            {
+                var profile = await _accountService.GetProfileCustomerAsync();
+                if (profile != null)
+                {
+                    return StatusCode(200, profile);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
+                }
             }
             catch (Exception e)
             {
