@@ -11,7 +11,6 @@ namespace TeamSolution.Testing.DAO
     {        
         private readonly ApplicationDbContext _mockDbcontext;
         private readonly IAccountRepository _accountRepository;
-
         public UserRepositoryTesting()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
