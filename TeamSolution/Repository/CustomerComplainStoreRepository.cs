@@ -1,13 +1,14 @@
-﻿using TeamSolution.Repository.Interface;
+﻿using TeamSolution.DatabaseContext;
+using TeamSolution.Repository.Interface;
 
 namespace TeamSolution.Repository
 {
     public class CustomerComplainStoreRepository : ICustomerComplainStoreRepository
-    {
-        private readonly ICustomerComplainStoreRepository _customerComplainStoreRepository;
-        public CustomerComplainStoreRepository(ICustomerComplainStoreRepository customerComplainStoreRepository)
+    {        
+        private readonly ApplicationDbContext _context;
+        public CustomerComplainStoreRepository(ApplicationDbContext context)
         {
-            _customerComplainStoreRepository = customerComplainStoreRepository;
+            _context = context;
         }
     }
 }
