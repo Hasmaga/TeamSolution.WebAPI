@@ -17,8 +17,8 @@ namespace TeamSolution.Controllers
         }
 
         // POST: userapi/creatememberacc
-        [HttpPost("creatememberacc")]
-        public async Task<IActionResult> CreateMemberAccAsync(CreateNewCustomerReqDto acc)
+        [HttpPost("createcustomeracc")]
+        public async Task<IActionResult> CreateCustomerAccount(CreateNewCustomerReqDto acc)
         {
             try
             {

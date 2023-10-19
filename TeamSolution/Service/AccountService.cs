@@ -98,7 +98,7 @@ namespace TeamSolution.Service
             try
             {
                 _logger.LogInformation("CreateMemberAccAsync: " + acc.Email);
-                if (!await _accountRepository.CheckEmailIsExist(acc.Email))
+                if (await _accountRepository.CheckEmailIsExist(acc.Email))
                 {
                     throw new Exception(ErrorCode.USER_IS_EXIST);
                 }

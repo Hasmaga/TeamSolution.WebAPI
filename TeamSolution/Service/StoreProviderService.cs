@@ -4,10 +4,10 @@ using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Service
 {
-    public class StoreService : IStoreService
+    public class StoreProviderService : IStoreService
     {
         private readonly IStoreRepository _storeRepository;
-        public StoreService(IStoreRepository storeRepository)
+        public StoreProviderService(IStoreRepository storeRepository)
         {
             _storeRepository = storeRepository;
         }

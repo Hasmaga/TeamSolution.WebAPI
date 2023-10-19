@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TeamSolution.Enum;
+using TeamSolution.Model.Dto;
 using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Controllers
@@ -11,6 +14,28 @@ namespace TeamSolution.Controllers
         public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
+        }
+
+        // post: orderapi/create
+        [HttpPost("create")]
+        [Authorize]
+        public async Task<IActionResult> CreateOrder(CreateNewOrderReqDto order)
+        {
+            try
+            {
+                if (await _orderService.CreateOrderServiceAsync(order))
+                {
+                    return StatusCode(200, SucessfulCode.CREATE_ORDER_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
         }
     }
 }

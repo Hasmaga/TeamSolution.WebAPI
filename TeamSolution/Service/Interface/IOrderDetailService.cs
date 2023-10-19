@@ -4,6 +4,6 @@ namespace TeamSolution.Service.Interface
 {
     public interface IOrderDetailService
     {
-        Task<OrderDetail> GetOrderDetailById(int id);
+        Task<bool> CreateOrderDetailServiceAsync(OrderDetail orderDetail);
     }
 }

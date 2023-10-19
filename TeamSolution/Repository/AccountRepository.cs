@@ -58,9 +58,9 @@ namespace TeamSolution.Repository
                 var user = await _context.Accounts.FirstOrDefaultAsync(x => x.Email == email);
                 if (user != null)
                 {
-                    return false;
+                    return true;
                 }
-                return true;
+                return false;
             }
             catch (Exception)
             {

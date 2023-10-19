@@ -1,5 +1,7 @@
 ﻿using TeamSolution.Repository.Interface;
 using TeamSolution.DatabaseContext;
+using TeamSolution.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeamSolution.Repository
 {
@@ -10,6 +12,19 @@ namespace TeamSolution.Repository
         public StoreRepository(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<Store> GetStoreByIdRepositoryAsync(Guid id)
+        {
+            try
+            {
+                return await _context.Stores.FirstOrDefaultAsync(x => x.Id == id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

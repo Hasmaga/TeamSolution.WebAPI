@@ -12,12 +12,7 @@ namespace TeamSolution.Service
             _orderDetailRepository = orderDetailRepository;
         }
 
-        public async Task<OrderDetail> GetOrderDetailById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<OrderDetail> IOrderDetailService.GetOrderDetailById(int id)
+        public Task<bool> CreateOrderDetailServiceAsync(OrderDetail orderDetail)
         {
             throw new NotImplementedException();
         }

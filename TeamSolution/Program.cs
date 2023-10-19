@@ -102,7 +102,7 @@ builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IShipperReportIssueTourService, ShipperReportIssueTourService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
-builder.Services.AddScoped<IStoreService, StoreService>();
+builder.Services.AddScoped<IStoreService, StoreProviderService>();
 builder.Services.AddScoped<IStoreServiceService, StoreServiceService>();
 builder.Services.AddScoped<ITourShipperService, TourShipperService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
