@@ -51,7 +51,7 @@ namespace TeamSolution.Repository
             }
         }
 
-        // Get all role in database
+        // Get all role in database ///////
         public async Task<List<Role>> GetAllRoleAsyncDAO()
         {
             try
