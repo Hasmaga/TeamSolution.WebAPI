@@ -11,8 +11,5 @@ namespace TeamSolution.Service.Interface
         Task<bool> GetStatusAccountAsync();
         Task<GetProfileCustomerReqDto> GetProfileCustomerAsync();
         Task<bool> GenerateOtpAccountAndSendToEmail();
-
-
-
     }
 }
