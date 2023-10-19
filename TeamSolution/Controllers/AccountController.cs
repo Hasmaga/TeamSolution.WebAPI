@@ -152,6 +152,7 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+        
         [HttpGet("GetProfile")]
         [Authorize]
         public async Task<IActionResult> GetProfileUser()
