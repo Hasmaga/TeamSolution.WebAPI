@@ -1,12 +1,13 @@
 ﻿using TeamSolution.Repository;
+using TeamSolution.Repository.Interface;
 using TeamSolution.Service.Interface;
 
 namespace TeamSolution.Service
 {
     public class IssueService : IIssueService
     {
-        private IssueRepository _repository;
-        public IssueService (IssueRepository repository)
+        private IIssueRepository _repository;
+        public IssueService (IIssueRepository repository)
         {
             _repository = repository;
         }

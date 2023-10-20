@@ -1,5 +1,4 @@
 ﻿using TeamSolution.Service.Interface;
-using TeamSolution.Model.Dto;
 using TeamSolution.Model;
 using TeamSolution.Repository.Interface;
 using System.Security.Claims;
@@ -9,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using TeamSolution.Enum;
 using System.Net.Mail;
 using TeamSolution.Repository;
+using TeamSolution.ViewModel.Account;
 
 namespace TeamSolution.Service
 {

@@ -1,5 +1,5 @@
 ﻿using TeamSolution.Model;
-using TeamSolution.Model.Dto;
+using TeamSolution.ViewModel.Order;
 
 namespace TeamSolution.Service.Interface
 {

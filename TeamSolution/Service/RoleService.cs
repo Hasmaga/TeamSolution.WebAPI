@@ -6,8 +6,8 @@ using System.Text;
 using TeamSolution.Service.Interface;
 using TeamSolution.Enum;
 using TeamSolution.Model;
-using TeamSolution.Model.Dto;
 using TeamSolution.Repository.Interface;
+using TeamSolution.ViewModel.Role;
 
 namespace TeamSolution.Service
 {
