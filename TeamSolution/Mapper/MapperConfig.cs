@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using TeamSolution.Model;
-using TeamSolution.Model.Dto;
+using TeamSolution.ViewModel.Role;
 
 namespace TeamSolution.Mapper
 {

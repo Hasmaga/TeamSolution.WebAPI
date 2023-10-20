@@ -3,7 +3,7 @@ using TeamSolution.Repository.Interface;
 using TeamSolution.Model;
 using System.Security.Claims;
 using TeamSolution.Enum;
-using TeamSolution.Model.Dto;
+using TeamSolution.ViewModel.Order;
 
 namespace TeamSolution.Service
 {

@@ -48,15 +48,15 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 // Add cross-origin resource sharing
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAll", builder =>
-//    {
-//        builder.AllowAnyOrigin()
-//               .AllowAnyMethod()
-//               .AllowAnyHeader();
-//    });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 //// Config shake hand with android studio for trust certificate
 //builder.Services.AddHttpClient("android", client =>
@@ -72,7 +72,7 @@ builder.Services.AddSwaggerGen(option =>
 //});
 
 
-   
+
 
 
 // Add AutoMapper
