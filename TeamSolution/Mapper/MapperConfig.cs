@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TeamSolution.Model;
 using TeamSolution.ViewModel.Role;
+using TeamSolution.ViewModel.Store;
 
 namespace TeamSolution.Mapper
 {
@@ -10,6 +11,7 @@ namespace TeamSolution.Mapper
         {
             //CreateMap<Source, Destination>();
             CreateMap<Role, NewRoleReqDto>().ReverseMap();
+            CreateMap<Store, StoreModel>().ReverseMap();
         }
     }
 }
