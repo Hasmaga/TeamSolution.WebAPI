@@ -56,7 +56,7 @@ namespace TeamSolution.Service
                     timeShipperTakeOrder: null,
                     timeDeliverOrder: order.TimeDeliveryOrder,
                     timeShipperDeliverOrder: null,
-                    statusOrderId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnum.WAITING_FOR_CONFIRMATION),
+                    statusOrderId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_FOR_CONFIRMATION),
                     tourShipperId: null,
                     updateDateTime: null,
                     isDelete: false,

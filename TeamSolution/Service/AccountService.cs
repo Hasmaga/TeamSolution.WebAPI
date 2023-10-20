@@ -70,8 +70,8 @@ namespace TeamSolution.Service
                     phoneNumber: acc.PhoneNumber,
                     isActive: false,
                     forgotPasswordTimes: 0,
-                    roleId: await _roleRepository.FindIdByRoleNameAsync("Admin"),
-                    statusId: await _statusRepository.FindIdByStatusNameAsync("ACTIVED"),
+                    roleId: await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.ADMIN),
+                    statusId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ACTIVED),
                     address: acc.Address,
                     wallet: null,
                     isDelete: false,
@@ -117,8 +117,8 @@ namespace TeamSolution.Service
                     phoneNumber: acc.PhoneNumber,
                     isActive: false,
                     forgotPasswordTimes: 0,
-                    roleId: await _roleRepository.FindIdByRoleNameAsync("Customer"),
-                    statusId: await _statusRepository.FindIdByStatusNameAsync("NOT_VALIDATED"),
+                    roleId: await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.CUSTOMER),
+                    statusId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.NOT_VALIDATED),
                     address: acc.Address,
                     wallet: null,
                     isDelete: false,
@@ -203,7 +203,7 @@ namespace TeamSolution.Service
                 {
                     throw new Exception(ErrorCode.OTP_CODE_EXPIRED);
                 }
-                user.StatusId = await _statusRepository.FindIdByStatusNameAsync("ACTIVED");
+                user.StatusId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ACTIVED);
                 user.OtpCode = null;
                 user.OtpCodeCreated = null;
                 user.OtpCodeExpired = null;
@@ -225,7 +225,7 @@ namespace TeamSolution.Service
                 {
                     throw new Exception(ErrorCode.USER_NOT_FOUND);
                 }
-                if (user.StatusId == await _statusRepository.FindIdByStatusNameAsync("ACTIVED"))
+                if (user.StatusId == await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ACTIVED))
                 {
                     return true;
                 }
