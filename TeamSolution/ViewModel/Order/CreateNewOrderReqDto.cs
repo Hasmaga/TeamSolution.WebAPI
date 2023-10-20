@@ -1,10 +1,12 @@
-﻿namespace TeamSolution.Model.Dto
+﻿using TeamSolution.ViewModel.OrderDetail;
+
+namespace TeamSolution.ViewModel.Order
 {
     public class CreateNewOrderReqDto
     {
-        public String OrderAddress { get; set; }
-        public String OrderPhone { get; set; }
-        public String PaymentMethod { get; set; }
+        public string OrderAddress { get; set; }
+        public string OrderPhone { get; set; }
+        public string PaymentMethod { get; set; }
         public Guid StoreId { get; set; }
         public DateTime TimeTakeOrder { get; set; }
         public DateTime TimeDeliveryOrder { get; set; }

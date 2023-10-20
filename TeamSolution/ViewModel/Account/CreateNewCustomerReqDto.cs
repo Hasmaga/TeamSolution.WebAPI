@@ -1,4 +1,4 @@
-﻿namespace TeamSolution.Model.Dto
+﻿namespace TeamSolution.ViewModel.Account
 {
     public class CreateNewCustomerReqDto
     {

@@ -1,4 +1,4 @@
-﻿using TeamSolution.Model.Dto;
+﻿using TeamSolution.ViewModel.Account;
 
 namespace TeamSolution.Service.Interface
 {

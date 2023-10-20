@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeamSolution.Enum;
-using TeamSolution.Model.Dto;
 using TeamSolution.Service.Interface;
+using TeamSolution.ViewModel.Account;
 
 namespace TeamSolution.Controllers
 {
