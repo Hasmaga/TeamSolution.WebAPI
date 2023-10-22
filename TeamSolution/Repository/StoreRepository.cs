@@ -75,6 +75,10 @@ namespace TeamSolution.Repository
                     //NOT FOUND
                     return Guid.Empty;
                 }
+                if (entity.IsDelete)
+                {
+                    throw new Exception(ResponseCodeConstants.IS_DELETED);
+                }
                 _mapper.Map(updateStoreRequest.StoreModel,entity);
                 await _context.SaveChangesAsync();
                 return entity.Id;
