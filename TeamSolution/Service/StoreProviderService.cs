@@ -41,9 +41,6 @@ namespace TeamSolution.Service
                 storeImage:null,
                 storeRating:null
                 );
-            //Thật zô nghĩa
-            //Dùng constructor rồi thì map làm cái gì nữa
-            //_mapper.Map(store, entity);
             return _storeRepository.CreateAsync(entity);
         }
         public Task<Guid> UpdateStoreAsync(UpdateStoreRequestModel updateStoreRequest)
