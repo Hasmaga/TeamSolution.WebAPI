@@ -18,6 +18,37 @@ namespace TeamSolution.Controllers
         {
             _storeService = storeService;
         }
+        [HttpGet("GetAll")]
+        [Authorize]
+        public async Task<IActionResult> GetAllStore()
+        {
+            try
+            {
+                var result = await _storeService.GetAllStore();
+                return StatusCode(200, result);
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+
+        [HttpGet("GetById")]
+        [Authorize]
+        public async Task<IActionResult> GetSigleStoreById(Guid id)
+        {
+            try
+            {
+                var result = await _storeService.GetStoreById(id);
+                return StatusCode(200, result);
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
 
         [HttpPost("create")]
         [Authorize]
@@ -39,5 +70,26 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+        [HttpPut("Update")]
+        [Authorize]
+        public async Task<IActionResult> UpdateStore(UpdateStoreRequestModel updateStoreRequest)
+        {
+            try
+            {
+                if (await _storeService.UpdateStoreAsync(updateStoreRequest) != Guid.Empty)
+                {
+                    return StatusCode(200, SucessfulCode.UPDATE_STORE_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+
     }
 }

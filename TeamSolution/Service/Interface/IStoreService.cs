@@ -5,8 +5,9 @@ namespace TeamSolution.Service.Interface
 {
     public interface IStoreService
     {
-        Task<Store> GetAllStore();
-        Task<ICollection<Store>> GetAllStoreEntity();
+        Task<Store> GetStoreById(Guid id);
+        Task<ICollection<Store>> GetAllStore();
         Task<Guid> CreateStoreAsync(StoreModel store);
+        Task<Guid> UpdateStoreAsync(UpdateStoreRequestModel updateStoreRequest);
     }
 }

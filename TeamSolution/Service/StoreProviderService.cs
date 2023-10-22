@@ -17,11 +17,11 @@ namespace TeamSolution.Service
             _mapper = mapper;
         }
 
-        public Task<Store> GetAllStore()
+        public Task<Store> GetStoreById(Guid id)
         {
-            throw new NotImplementedException();
+            return _storeRepository.GetStoreByIdRepositoryAsync(id);
         }
-        public Task<ICollection<Store>> GetAllStoreEntity() 
+        public Task<ICollection<Store>> GetAllStore() 
         {
             return _storeRepository.GetAll();
         }
@@ -45,6 +45,10 @@ namespace TeamSolution.Service
             //Dùng constructor rồi thì map làm cái gì nữa
             //_mapper.Map(store, entity);
             return _storeRepository.CreateAsync(entity);
+        }
+        public Task<Guid> UpdateStoreAsync(UpdateStoreRequestModel updateStoreRequest)
+        {
+            return _storeRepository.UpdateAsync(updateStoreRequest);
         }
     }
 }
