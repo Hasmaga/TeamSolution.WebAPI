@@ -14,6 +14,7 @@
         public const string EXISTED = "EXISTED";
         public const string DUPLICATE = "DUPLICATE";
         public const string EMPTY = "EMPTY";
+        public const string IS_DELETED = "IS_DELETED";
     }
     public class ResponseCodeConstantsStore
     {
