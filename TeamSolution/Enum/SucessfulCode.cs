@@ -10,6 +10,7 @@
         #region StoreConstants
         public const string CREATE_STORE_SUCCESSFULLY = "CREATE_STORE_SUCCESSFULLY";
         public const string UPDATE_STORE_SUCCESSFULLY = "UPDATE_STORE_SUCCESSFULLY";
+        public const string DELETE_STORE_SUCCESSFULLY = "DELETE_STORE_SUCCESSFULLY";
         #endregion
 
     }
