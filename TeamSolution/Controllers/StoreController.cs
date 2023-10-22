@@ -24,7 +24,12 @@ namespace TeamSolution.Controllers
         {
             try
             {
+                
                 var result = await _storeService.GetAllStore();
+                if(result?.Count==0)
+                {
+                    return StatusCode(200, ResponseCodeConstants.EMPTY);
+                }
                 return StatusCode(200, result);
 
             }
@@ -41,8 +46,15 @@ namespace TeamSolution.Controllers
             try
             {
                 var result = await _storeService.GetStoreById(id);
-                return StatusCode(200, result);
+                if (result != null)
+                {
 
+                    return StatusCode(200, result);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsStore.STORE + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
             }
             catch (Exception e)
             {
@@ -58,11 +70,12 @@ namespace TeamSolution.Controllers
             {
                 if (await _storeService.CreateStoreAsync(store) != Guid.Empty)
                 {
-                    return StatusCode(200, SucessfulCode.CREATE_ORDER_SUCCESSFULLY);
+                    return StatusCode(200, ResponseCodeConstantsStore.CREATE_STORE_SUCCESSFULLY);
                 }
                 else
                 {
-                    return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
+                    //Never happen - If something wrong, it will throw exception.
+                    return StatusCode(500, ResponseCodeConstantsStore.CREATE_STORE_FAILED);
                 }
             }
             catch (Exception e)
