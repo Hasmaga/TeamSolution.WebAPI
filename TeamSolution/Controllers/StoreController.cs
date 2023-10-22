@@ -56,7 +56,7 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                if (await _storeService.CreateStoreAsync(store)!=Guid.Empty)
+                if (await _storeService.CreateStoreAsync(store) != Guid.Empty)
                 {
                     return StatusCode(200, SucessfulCode.CREATE_ORDER_SUCCESSFULLY);
                 }
@@ -76,14 +76,9 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                if (await _storeService.UpdateStoreAsync(updateStoreRequest) != Guid.Empty)
-                {
-                    return StatusCode(200, SucessfulCode.UPDATE_STORE_SUCCESSFULLY);
-                }
-                else
-                {
-                    return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
-                }
+                await _storeService.UpdateStoreAsync(updateStoreRequest);
+                return StatusCode(200, SucessfulCode.UPDATE_STORE_SUCCESSFULLY);
+               
             }
             catch (Exception e)
             {
@@ -96,14 +91,9 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                if (await _storeService.DeleteStoreAsync(id) != Guid.Empty)
-                {
-                    return StatusCode(200, SucessfulCode.DELETE_STORE_SUCCESSFULLY);
-                }
-                else
-                {
-                    return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
-                }
+                await _storeService.DeleteStoreAsync(id);
+                return StatusCode(200, SucessfulCode.DELETE_STORE_SUCCESSFULLY);
+
             }
             catch (Exception e)
             {
