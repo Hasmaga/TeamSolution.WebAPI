@@ -8,11 +8,12 @@
 
     public class ResponseCodeConstants
     {
-        public const string NOT_FOUND = "NOT_FOUND!";
-        public const string SUCCESS = "SUCCESS!";
-        public const string FAILED = "FAILED!";
-        public const string EXISTED = "EXISTED!";
-        public const string DUPLICATE = "DUPLICATE!";
+        public const string NOT_FOUND = "NOT_FOUND";
+        public const string SUCCESS = "SUCCESS";
+        public const string FAILED = "FAILED";
+        public const string EXISTED = "EXISTED";
+        public const string DUPLICATE = "DUPLICATE";
+        public const string EMPTY = "EMPTY";
     }
     public class ResponseCodeConstantsStore
     {
