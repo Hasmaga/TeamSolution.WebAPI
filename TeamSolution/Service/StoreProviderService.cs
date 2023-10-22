@@ -50,5 +50,9 @@ namespace TeamSolution.Service
         {
             return _storeRepository.UpdateAsync(updateStoreRequest);
         }
+        public Task<Guid> DeleteStoreAsync(Guid id)
+        {
+            return _storeRepository.DeleteAsync(id);
+        }
     }
 }
