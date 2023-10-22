@@ -69,10 +69,11 @@ namespace TeamSolution.Repository
             try
             {
                 _logger.LogInformation("Update store with ID:" + updateStoreRequest.Id);
-                var entity = _context.Stores.FindAsync(new object[] { updateStoreRequest.Id }, cancellationToken).Result;
+                var entity = await _context.Stores.FindAsync(new object[] { updateStoreRequest.Id }, cancellationToken);
                 if (entity == null)
                 {
-                    throw new Exception("Thấy cái nịt");
+                    //NOT FOUND
+                    return Guid.Empty;
                 }
                 _mapper.Map(updateStoreRequest.StoreModel,entity);
                 await _context.SaveChangesAsync();
@@ -88,10 +89,11 @@ namespace TeamSolution.Repository
             try
             {
                 _logger.LogInformation("Delete store with ID:" + id);
-                var entity = _context.Stores.FindAsync(new object[] { id }, cancellationToken).Result;
+                var entity = await _context.Stores.FindAsync(new object[] { id }, cancellationToken);
                 if (entity == null)
                 {
-                    throw new Exception("Thấy cái nịt");
+                    //NOT FOUND
+                    return Guid.Empty;
                 }
                 entity.IsDelete = true;
                 entity.DeleteDateTime = DateTime.UtcNow;
