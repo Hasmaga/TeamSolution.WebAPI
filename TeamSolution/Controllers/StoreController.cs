@@ -50,7 +50,7 @@ namespace TeamSolution.Controllers
             }
         }
 
-        [HttpPost("create")]
+        [HttpPost("Create")]
         [Authorize]
         public async Task<IActionResult> CreateStore(StoreModel store)
         {
@@ -76,9 +76,14 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                await _storeService.UpdateStoreAsync(updateStoreRequest);
-                return StatusCode(200, SucessfulCode.UPDATE_STORE_SUCCESSFULLY);
-               
+                if (await _storeService.UpdateStoreAsync(updateStoreRequest) != Guid.Empty)
+                {
+                    return StatusCode(200, ResponseCodeConstantsStore.UPDATE_STORE_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsStore.STORE + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
             }
             catch (Exception e)
             {
@@ -91,8 +96,14 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                await _storeService.DeleteStoreAsync(id);
-                return StatusCode(200, SucessfulCode.DELETE_STORE_SUCCESSFULLY);
+                if(await _storeService.DeleteStoreAsync(id) != Guid.Empty)
+                {
+                    return StatusCode(200, ResponseCodeConstantsStore.DELETE_STORE_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsStore.STORE + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
 
             }
             catch (Exception e)
