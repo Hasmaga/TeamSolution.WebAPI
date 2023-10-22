@@ -83,6 +83,26 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        
+        public async Task<Guid> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogInformation("Delete store with ID:" + id);
+                var entity = _context.Stores.FindAsync(new object[] { id }, cancellationToken).Result;
+                if (entity == null)
+                {
+                    throw new Exception("Thấy cái nịt");
+                }
+                entity.IsDelete = true;
+                entity.DeleteDateTime = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }

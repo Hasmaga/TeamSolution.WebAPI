@@ -90,6 +90,26 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+        [HttpDelete("Delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteStore(Guid id)
+        {
+            try
+            {
+                if (await _storeService.DeleteStoreAsync(id) != Guid.Empty)
+                {
+                    return StatusCode(200, SucessfulCode.DELETE_STORE_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
 
     }
 }
