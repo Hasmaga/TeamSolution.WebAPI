@@ -4,6 +4,7 @@ using TeamSolution.Model;
 using System.Security.Claims;
 using TeamSolution.Enum;
 using TeamSolution.ViewModel.Order;
+using TeamSolution.ViewModel.Store;
 
 namespace TeamSolution.Service
 {
@@ -86,7 +87,24 @@ namespace TeamSolution.Service
                 throw;
             }
         }
+        public async Task<ICollection<Order>> GetAllOrder()
+        {
+            return await _orderRepository.GetAllAsync();
+        }
 
+        public async Task<Order> GetOrderById(Guid id)
+        {
+            return await _orderRepository.GetByIdAsync(id);
+        }
+
+        public async Task<Guid> UpdateOrderAsync(UpdateOrderRequestModel request)
+        {
+            return await _orderRepository.UpdateAsync(request);
+        }
+        public async Task<Guid> DeleteOrderAsync(Guid id)
+        {
+            return await _orderRepository.DeleteAsync(id);
+        }
 
         #region private method
         private Guid GetSidLogged()
