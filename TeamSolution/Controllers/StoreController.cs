@@ -98,11 +98,17 @@ namespace TeamSolution.Controllers
                     return StatusCode(404, ResponseCodeConstantsStore.STORE + "_" + ResponseCodeConstants.NOT_FOUND);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                if (ex.Message == ResponseCodeConstants.IS_DELETED)
+                {
+                    // Undefine status code
+                    return StatusCode(500, ResponseCodeConstants.IS_DELETED);
+                }
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+        
         [HttpDelete("Delete")]
         [Authorize]
         public async Task<IActionResult> DeleteStore(Guid id)
@@ -119,8 +125,13 @@ namespace TeamSolution.Controllers
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                if (ex.Message == ResponseCodeConstants.IS_DELETED)
+                {
+                    // Undefine status code
+                    return StatusCode(500, ResponseCodeConstants.IS_DELETED);
+                }
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
