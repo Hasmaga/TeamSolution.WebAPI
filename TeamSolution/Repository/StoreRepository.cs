@@ -75,6 +75,7 @@ namespace TeamSolution.Repository
                     //NOT FOUND
                     return Guid.Empty;
                 }
+
                 if (entity.IsDelete)
                 {
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
@@ -99,10 +100,12 @@ namespace TeamSolution.Repository
                     //NOT FOUND
                     return Guid.Empty;
                 }
+
                 if (entity.IsDelete)
                 {
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
                 }
+
                 entity.IsDelete = true;
                 entity.DeleteDateTime = DateTime.UtcNow;
                 await _context.SaveChangesAsync();

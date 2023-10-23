@@ -108,6 +108,7 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+        
         [HttpDelete("Delete")]
         [Authorize]
         public async Task<IActionResult> DeleteStore(Guid id)
