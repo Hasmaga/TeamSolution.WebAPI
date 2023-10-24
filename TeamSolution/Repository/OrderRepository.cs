@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TeamSolution.Enum;
 using TeamSolution.ViewModel.Order;
 using AutoMapper;
+using System.Linq;
 
 namespace TeamSolution.Repository
 {
@@ -38,7 +39,7 @@ namespace TeamSolution.Repository
 
         
 
-        public async Task<ICollection<Order>> GetAllAsync(bool includeIsDeleted)
+        public async Task<ICollection<Order>> GetAllRepositoryAsync(bool includeIsDeleted)
         {
             try
             {
@@ -56,7 +57,7 @@ namespace TeamSolution.Repository
             }
         }
 
-        public async Task<Order> GetByIdAsync(Guid id)
+        public async Task<Order> GetByIdRepositoryAsync(Guid id)
         {
             try
             {
@@ -68,8 +69,41 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+        public async Task<ICollection<Order>> GetByCustomerIdRepositoryAsync(Guid id, bool includeIsDeleted)
+        {
+            try
+            {
+                var queryable = _context.Orders.Where(x => x.CustomerId == id);
+                if (!includeIsDeleted)
+                {
+                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                }
+                return await queryable.ToListAsync();
+            }
+            catch (Exception)
+            {
 
-        public async Task<Guid> UpdateAsync(UpdateOrderRequestModel request, CancellationToken cancellationToken = default)
+                throw;
+            }
+        }
+        public async Task<ICollection<Order>> GetByStoreIdRepositoryAsync(Guid id, bool includeIsDeleted)
+        {
+            try
+            {
+                var queryable = _context.Orders.Where(x => x.StoreId == id);
+                if (!includeIsDeleted)
+                {
+                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                }
+                return await queryable.ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<Guid> UpdateRepositoryAsync(UpdateOrderRequestModel request, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -94,7 +128,7 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<Guid> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Guid> DeleteRepositoryAsync(Guid id, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -119,5 +153,6 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+        
     }
 }

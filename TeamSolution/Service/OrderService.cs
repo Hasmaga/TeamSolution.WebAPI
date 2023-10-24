@@ -87,25 +87,34 @@ namespace TeamSolution.Service
                 throw;
             }
         }
-        public async Task<ICollection<Order>> GetAllOrder()
+        public async Task<ICollection<Order>> GetAllOrderServiceAsync()
         {
-            return await _orderRepository.GetAllAsync();
+            return await _orderRepository.GetAllRepositoryAsync();
         }
 
-        public async Task<Order> GetOrderById(Guid id)
+        public async Task<Order> GetOrderByIdServiceAsync(Guid id)
         {
-            return await _orderRepository.GetByIdAsync(id);
+            return await _orderRepository.GetByIdRepositoryAsync(id);
         }
 
-        public async Task<Guid> UpdateOrderAsync(UpdateOrderRequestModel request)
+        public async Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request)
         {
-            return await _orderRepository.UpdateAsync(request);
+            return await _orderRepository.UpdateRepositoryAsync(request);
         }
-        public async Task<Guid> DeleteOrderAsync(Guid id)
+        public async Task<Guid> DeleteOrderServiceAsync(Guid id)
         {
-            return await _orderRepository.DeleteAsync(id);
+            return await _orderRepository.DeleteRepositoryAsync(id);
         }
 
+        public async Task<ICollection<Order>> GetByCustomerIdServiceAsync(Guid id)
+        {
+            return await _orderRepository.GetByCustomerIdRepositoryAsync(id);
+        }
+
+        public async Task<ICollection<Order>> GetByStoreIdServiceAsync(Guid id)
+        {
+            return await _orderRepository.GetByStoreIdRepositoryAsync(id);
+        }
         #region private method
         private Guid GetSidLogged()
         {
@@ -116,6 +125,7 @@ namespace TeamSolution.Service
             }
             return Guid.Parse(sid);
         }
+
         #endregion
     }
 }

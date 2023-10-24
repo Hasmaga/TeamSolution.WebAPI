@@ -7,9 +7,11 @@ namespace TeamSolution.Service.Interface
     public interface IOrderService
     {
         Task<bool> CreateOrderServiceAsync(CreateNewOrderReqDto order);
-        Task<Order> GetOrderById(Guid id);
-        Task<ICollection<Order>> GetAllOrder();
-        Task<Guid> UpdateOrderAsync(UpdateOrderRequestModel request);
-        Task<Guid> DeleteOrderAsync(Guid id);
+        Task<Order> GetOrderByIdServiceAsync(Guid id);
+        Task<ICollection<Order>> GetAllOrderServiceAsync();
+        Task<ICollection<Order>> GetByCustomerIdServiceAsync(Guid id);
+        Task<ICollection<Order>> GetByStoreIdServiceAsync(Guid id);
+        Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request);
+        Task<Guid> DeleteOrderServiceAsync(Guid id);
     }
 }

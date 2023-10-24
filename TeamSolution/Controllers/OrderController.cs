@@ -19,7 +19,7 @@ namespace TeamSolution.Controllers
         }
 
         // post: orderapi/create
-        [HttpPost("create")]
+        [HttpPost("Create")]
         [Authorize]
         public async Task<IActionResult> CreateOrder(CreateNewOrderReqDto order)
         {
@@ -45,7 +45,7 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                var result = await _orderService.GetAllOrder();
+                var result = await _orderService.GetAllOrderServiceAsync();
                 if (result?.Count == 0)
                 {
                     return StatusCode(200, ResponseCodeConstants.EMPTY);
@@ -59,13 +59,13 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
-        [HttpGet("GetById")]
+        [HttpGet("GetOrderById")]
         [Authorize]
-        public async Task<IActionResult> GetSigleOrderById(Guid id)
+        public async Task<IActionResult> GetSingleOrderById(Guid id)
         {
             try
             {
-                var result = await _orderService.GetOrderById(id);
+                var result = await _orderService.GetOrderByIdServiceAsync(id);
                 if (result != null)
                 {
 
@@ -81,13 +81,51 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+        [HttpGet("GetListOrderByCustomerId")]
+        [Authorize]
+        public async Task<IActionResult> GetOrdersByCustomerId(Guid id)
+        {
+            try
+            {
+                var result = await _orderService.GetByCustomerIdServiceAsync(id);
+                if (result?.Count == 0)
+                {
+                    return StatusCode(200, ResponseCodeConstants.EMPTY);
+                }
+
+                return StatusCode(200, result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+        [HttpGet("GetListOrderByStoreId")]
+        [Authorize]
+        public async Task<IActionResult> GetOrdersByStoreId(Guid id)
+        {
+            try
+            {
+                var result = await _orderService.GetByStoreIdServiceAsync(id);
+                if (result?.Count == 0)
+                {
+                    return StatusCode(200, ResponseCodeConstants.EMPTY);
+                }
+
+                return StatusCode(200, result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
         [HttpPut("Update")]
         [Authorize]
         public async Task<IActionResult> UpdateOrder(UpdateOrderRequestModel updateOrderRequest)
         {
             try
             {
-                if (await _orderService.UpdateOrderAsync(updateOrderRequest) != Guid.Empty)
+                if (await _orderService.UpdateOrderServiceAsync(updateOrderRequest) != Guid.Empty)
                 {
                     return StatusCode(200, ResponseCodeConstantsOrder.UPDATE_ORDER_SUCCESSFULLY);
                 }
@@ -112,7 +150,7 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                if (await _orderService.DeleteOrderAsync(id) != Guid.Empty)
+                if (await _orderService.DeleteOrderServiceAsync(id) != Guid.Empty)
                 {
                     return StatusCode(200, ResponseCodeConstantsOrder.DELETE_ORDER_SUCCESSFULLY);
                 }
