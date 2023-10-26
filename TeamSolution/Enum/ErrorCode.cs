@@ -16,5 +16,8 @@
         public const string OTP_CODE_EXPIRED = "OTP_CODE_EXPIRED";
         public const string OTP_CODE_NOT_MATCH = "OTP_CODE_NOT_MATCH";
         public const string CREATE_ORDER_FAIL = "CREATE_ORDER_FAIL";
+        public const string ORDER_NOT_FOUND = "ORDER_NOT_FOUND";
+        public const string UPDATE_ORDER_FAIL = "UPDATE_ORDER_FAIL";
+        public const string CREATE_FEEDBACK_FAIL = "CREATE_FEEDBACK_FAIL";
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TeamSolution.Model;
+using TeamSolution.ViewModel.Order;
 using TeamSolution.ViewModel.Role;
 using TeamSolution.ViewModel.Store;
 
@@ -12,6 +13,7 @@ namespace TeamSolution.Mapper
             //CreateMap<Source, Destination>();
             CreateMap<Role, NewRoleReqDto>().ReverseMap();
             CreateMap<Store, StoreModel>().ReverseMap();
+            CreateMap<Order, CreateNewOrderReqDto>().ReverseMap();
         }
     }
 }
