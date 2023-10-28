@@ -7,21 +7,7 @@ namespace TeamSolution.Model
     public class Role : Common
     {
         [Column("RoleName")]
-        public string RoleName { get; set; }
-
-        [Column("CreateDateTime")]
-        public DateTime CreateDateTime { get; set; }
-
-        [Column("UpdateDateTime")]
-        public DateTime? UpdateDateTime { get; set; }
-
-        public ICollection<Account> Accounts { get; set; }
-
-        public Role(string roleName, DateTime createDateTime, DateTime? updateDateTime)
-        {
-            RoleName = roleName;
-            CreateDateTime = createDateTime;
-            UpdateDateTime = updateDateTime;
-        }
+        public string RoleName { get; set; } = null!;    
+        public ICollection<Account>? Accounts { get; set; }       
     }
 }

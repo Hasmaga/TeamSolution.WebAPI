@@ -61,30 +61,17 @@ namespace TeamSolution.Service
                 // Create new account
                 var passwordHash = CreatePasswordHash(acc.Password, out byte[] passwordSalt);
                 var newAcc = new Account
-                (
-                    firstName: acc.FirstName,
-                    lastName: acc.LastName,
-                    email: acc.Email,
-                    passwordHash: passwordHash,
-                    passwordSalt: Convert.ToBase64String(passwordSalt),
-                    phoneNumber: acc.PhoneNumber,
-                    isActive: false,
-                    forgotPasswordTimes: 0,
-                    roleId: await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.ADMIN),
-                    statusId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ACTIVED),
-                    address: acc.Address,
-                    wallet: null,
-                    isDelete: false,
-                    createDateTime: DateTime.Now,
-                    updateDateTime: null,
-                    shipperPerformance: null,
-                    shipperAvalability: null,
-                    deleteDateTime: null,
-                    storeId: null,
-                    otpCode: null,
-                    otpCodeCreated: null,
-                    otpCodeExpired: null
-                );
+                {
+                    FirstName = acc.FirstName,
+                    LastName = acc.LastName,
+                    Email = acc.Email,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = Convert.ToBase64String(passwordSalt),
+                    PhoneNumber = acc.PhoneNumber,
+                    RoleId = await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.ADMIN),
+                    StatusId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ACTIVED),
+                    Address = acc.Address
+                };
                 return await _accountRepository.CreateUserAsync(newAcc);                
             }
             catch (Exception)
@@ -108,30 +95,20 @@ namespace TeamSolution.Service
                 var otpCode = GenerateOtpCode();
 
                 var newAcc = new Account
-                (
-                    firstName: acc.FirstName,
-                    lastName: acc.LastName,
-                    email: acc.Email,
-                    passwordHash: passwordHash,
-                    passwordSalt: Convert.ToBase64String(passwordSalt),
-                    phoneNumber: acc.PhoneNumber,
-                    isActive: false,
-                    forgotPasswordTimes: 0,
-                    roleId: await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.CUSTOMER),
-                    statusId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.NOT_VALIDATED),
-                    address: acc.Address,
-                    wallet: null,
-                    isDelete: false,
-                    createDateTime: DateTime.Now,
-                    updateDateTime: null,
-                    shipperPerformance: null,
-                    shipperAvalability: null,
-                    deleteDateTime: null,
-                    storeId: null,
-                    otpCode: otpCode,
-                    otpCodeCreated: DateTime.UtcNow,
-                    otpCodeExpired: DateTime.UtcNow.AddMinutes(5)
-                );
+                {
+                    FirstName = acc.FirstName,
+                    LastName = acc.LastName,
+                    Email = acc.Email,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = Convert.ToBase64String(passwordSalt),
+                    PhoneNumber = acc.PhoneNumber,
+                    RoleId = await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.CUSTOMER),
+                    StatusId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ACTIVED),
+                    Address = acc.Address,
+                    OtpCode = otpCode,
+                    OtpCodeCreated = DateTime.UtcNow,
+                    OtpCodeExpired = DateTime.UtcNow.AddMinutes(5)
+                };
 
                 // Send otp code to email
                 var subject = "OTP Code";
@@ -295,7 +272,7 @@ namespace TeamSolution.Service
 
         private Guid GetSidLogged()
         {            
-            var sid = _http.HttpContext.User.FindFirst(ClaimTypes.Sid).Value;
+            var sid = _http.HttpContext?.User.FindFirst(ClaimTypes.Sid)?.Value;
             if (sid == null)
             {
                 throw new Exception(ErrorCode.USER_NOT_FOUND);
@@ -322,7 +299,9 @@ namespace TeamSolution.Service
             {
                 new Claim(ClaimTypes.Sid, logUser.Id.ToString())                
             };
+#pragma warning disable CS8604 // Possible null reference argument.
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+#pragma warning restore CS8604 // Possible null reference argument.
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(                                            
                                              claims: claims,
@@ -339,7 +318,9 @@ namespace TeamSolution.Service
             // remove bearer from token
             token = token.Substring(7);
             var tokenHandler = new JwtSecurityTokenHandler();
+#pragma warning disable CS8604 // Possible null reference argument.
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("AppSettings:Token").Value);
+#pragma warning restore CS8604 // Possible null reference argument.
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

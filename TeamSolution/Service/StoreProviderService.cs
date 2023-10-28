@@ -16,5 +16,10 @@ namespace TeamSolution.Service
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> CreateStoreRepository(Store store)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

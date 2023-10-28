@@ -44,36 +44,31 @@ namespace TeamSolution.Service
             {
                 var store = await _storeRepository.GetStoreByIdRepositoryAsync(order.StoreId);
                 var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                
                 Order newOrder = new Order
-                (
-                    customerId: userLogged.Id,
-                    orderAddress: order.OrderAddress,
-                    phoneCustomer: order.OrderPhone,
-                    createDateTime: DateTime.Now,
-                    paymentMethod: order.PaymentMethod,
-                    storeId: order.StoreId,
-                    timeTakeOrder: order.TimeTakeOrder,
-                    timeShipperTakeOrder: null,
-                    timeDeliverOrder: order.TimeDeliveryOrder,
-                    timeShipperDeliverOrder: null,
-                    statusOrderId: await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_FOR_CONFIRMATION),
-                    tourShipperId: null,
-                    updateDateTime: null,
-                    isDelete: false,
-                    deleteDateTime: null
-                );
+                {
+                    CustomerId = userLogged.Id,
+                    OrderAddress = order.OrderAddress,
+                    PhoneCustomer = order.OrderPhone,
+                    PaymentMethod = order.PaymentMethod,
+                    StoreId = order.StoreId,
+                    TimeTakeOrder = order.TimeTakeOrder,
+                    TimeDeliverOrder = order.TimeDeliveryOrder,
+                    StatusOrderId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_FOR_CONFIRMATION)
+                };
                 if (await _orderRepository.CreateOrderRepositoryAsync(newOrder))
                 {
                     foreach (var item in order.OrderDetails)
                     {
                         StoreService storeService = await _storeServiceRepository.GetStoreServiceByIdRepositoryAsync(item.StoreServiceId);
+                        
                         OrderDetail newOrderDetail = new OrderDetail
-                        (
-                            orderId: newOrder.Id,
-                            storeServiceId: storeService.Id,
-                            weight: item.Weight,
-                            price: storeService.ServicePrice * item.Weight
-                        );
+                        {
+                            OrderId = newOrder.Id,
+                            StoreServiceId = storeService.Id,
+                            Weight = item.Weight,
+                            Price = storeService.ServicePrice * item.Weight
+                        };
                         await _orderDetailRepository.CreateOrderDetailRepositoryAsync(newOrderDetail);
                     }
                     return true;
@@ -91,7 +86,7 @@ namespace TeamSolution.Service
         #region private method
         private Guid GetSidLogged()
         {
-            var sid = _http.HttpContext.User.FindFirst(ClaimTypes.Sid).Value;
+            var sid = _http.HttpContext?.User.FindFirst(ClaimTypes.Sid)?.Value;
             if (sid == null)
             {
                 throw new Exception(ErrorCode.USER_NOT_FOUND);

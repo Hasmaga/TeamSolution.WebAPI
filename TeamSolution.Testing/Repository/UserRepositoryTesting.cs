@@ -23,31 +23,20 @@ namespace TeamSolution.Testing.DAO
         [Fact]
         public async Task CreateUserAsync_WhenCalled_ReturnsOkResult()
         {
-            //Arrange
-            var user = new Account(
-                "test",
-                "test",
-                "test@gmail.com",
-                CreatePasswordHash("test", out byte[] passwordSalt),
-                Convert.ToBase64String(passwordSalt),
-                "0123456789",
-                true,
-                0,
-                Guid.Parse("48C1D11F-FE0C-4D02-825F-05486D4C543B"),
-                Guid.Parse("45C1D21F-FE0C-4D02-825F-05486D4B543B"),
-                "test",
-                0,
-                false,
-                DateTime.Now,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-                );
+            //Arrange           
+
+            var user = new Account
+            {
+                FirstName = "test",
+                LastName = "test",
+                Email = "test@gmail.com",
+                PasswordHash = CreatePasswordHash("test", out byte[] passwordSalt),
+                PasswordSalt = Convert.ToBase64String(passwordSalt),
+                PhoneNumber = "0123456789",
+                RoleId = Guid.Parse("48C1D11F-FE0C-4D02-825F-05486D4C543B"),
+                StatusId = Guid.Parse("45C1D21F-FE0C-4D02-825F-05486D4B543B"),
+                Address = "test"
+            };
             //Act
             await _accountRepository.CreateUserAsync(user);
             var result = await _mockDbcontext.Accounts.FirstOrDefaultAsync(x => x.Email == user.Email);
@@ -59,30 +48,18 @@ namespace TeamSolution.Testing.DAO
         public async Task GetUserByEmailAsync_WhenCalled_ReturnEqualWithTestUser()
         {
             // Arrange
-            var user = new Account(
-                 "test",
-                 "test",
-                 "test@gmail.com",
-                 CreatePasswordHash("test", out byte[] passwordSalt),
-                 Convert.ToBase64String(passwordSalt),
-                 "0123456789",
-                 true,
-                 0,
-                 Guid.Parse("48C1D11F-FE0C-4D02-825F-05486D4C543B"),
-                 Guid.Parse("45C1D21F-FE0C-4D02-825F-05486D4B543B"),
-                 "test",
-                 0,
-                 false,
-                 DateTime.Now,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null,
-                 null
-                 );
+            var user = new Account
+            {
+                FirstName = "test",
+                LastName = "test",
+                Email = "test@gmail.com",
+                PasswordHash = CreatePasswordHash("test", out byte[] passwordSalt),
+                PasswordSalt = Convert.ToBase64String(passwordSalt),
+                PhoneNumber = "0123456789",
+                RoleId = Guid.Parse("48C1D11F-FE0C-4D02-825F-05486D4C543B"),
+                StatusId = Guid.Parse("45C1D21F-FE0C-4D02-825F-05486D4B543B"),
+                Address = "test"
+            };
             //Act
             await _mockDbcontext.Accounts.AddAsync(user);
             await _mockDbcontext.SaveChangesAsync();

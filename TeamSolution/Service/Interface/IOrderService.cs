@@ -1,5 +1,4 @@
-﻿using TeamSolution.Model;
-using TeamSolution.ViewModel.Order;
+﻿using TeamSolution.ViewModel.Order;
 
 namespace TeamSolution.Service.Interface
 {

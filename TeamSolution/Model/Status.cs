@@ -7,23 +7,16 @@ namespace TeamSolution.Model
     public class Status : Common
     {
         [Column("StatusName")]
-        public string StatusName { get; set; }
+        public string StatusName { get; set; } = null!;
 
         [Column("IsDeleted")]
         public bool IsDeleted { get; set; }
 
         [Column("Description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         // Relationship
-        public ICollection<Account> Accounts { get; set; }
-        public ICollection<Order> Orders { get; set; }
-
-        public Status(string statusName, bool isDeleted, string description)
-        {
-            StatusName = statusName;
-            IsDeleted = isDeleted;
-            Description = description;
-        }
+        public ICollection<Account>? Accounts { get; set; }
+        public ICollection<Order>? Orders { get; set; }       
     }
 }
