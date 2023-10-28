@@ -2,16 +2,23 @@
 using TeamSolution.DatabaseContext;
 using TeamSolution.Model;
 using Microsoft.EntityFrameworkCore;
+using TeamSolution.ViewModel.Store;
+using TeamSolution.Enum;
+using AutoMapper;
 
 namespace TeamSolution.Repository
 {
     public class StoreRepository : IStoreRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
+        private IMapper _mapper;
 
-        public StoreRepository(ApplicationDbContext context)
+        public StoreRepository(ApplicationDbContext context, ILogger<StoreRepository> logger,IMapper mapper)
         {
             _context = context;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<Store> GetStoreByIdRepositoryAsync(Guid id)
@@ -26,19 +33,89 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-
-        public async Task<bool> CreateStoreRepositoryAsync(Store store)
+        public async Task<ICollection<Store>> GetAll(bool includeIsDeleted)
         {
             try
             {
-                await _context.Stores.AddAsync(store);
-                await _context.SaveChangesAsync();
-                return true;
+                var queryable = _context.Stores.AsNoTracking();
+                if(!includeIsDeleted)
+                {
+                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                }
+                ICollection<Store> list = await queryable.ToListAsync();
+                return list;
             }
-            catch (Exception)
+            catch(Exception)
             {
                 throw;
             }
         }
+        public async Task<Guid> CreateAsync(Store store, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogInformation("Create store with ID:" + store.Id);
+                await _context.Stores.AddAsync(store);
+                await _context.SaveChangesAsync();
+                return store.Id;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public async Task<Guid> UpdateAsync(UpdateStoreRequestModel updateStoreRequest, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogInformation("Update store with ID:" + updateStoreRequest.Id);
+                var entity = await _context.Stores.FindAsync(new object[] { updateStoreRequest.Id }, cancellationToken);
+                if (entity == null)
+                {
+                    //NOT FOUND
+                    return Guid.Empty;
+                }
+
+                if (entity.IsDelete)
+                {
+                    throw new Exception(ResponseCodeConstants.IS_DELETED);
+                }
+                _mapper.Map(updateStoreRequest.StoreModel,entity);
+                await _context.SaveChangesAsync();
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public async Task<Guid> DeleteAsync(Guid id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogInformation("Delete store with ID:" + id);
+                var entity = await _context.Stores.FindAsync(new object[] { id }, cancellationToken);
+                if (entity == null)
+                {
+                    //NOT FOUND
+                    return Guid.Empty;
+                }
+
+                if (entity.IsDelete)
+                {
+                    throw new Exception(ResponseCodeConstants.IS_DELETED);
+                }
+
+                entity.IsDelete = true;
+                entity.DeleteDateTime = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }
