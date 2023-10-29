@@ -102,7 +102,7 @@ namespace TeamSolution.Controllers
 
         // GET: userapi/validateotpcode
         [Authorize]
-        [HttpPost("validateotpcode")]
+        [HttpPost("ValidateAcccountByOtpCodeAsync")]
         public async Task<IActionResult> ValidateAcccountByOtpCodeAsync(string otpCode)
         {
             try

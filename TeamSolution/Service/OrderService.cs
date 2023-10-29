@@ -69,7 +69,14 @@ namespace TeamSolution.Service
                             Weight = item.Weight,
                             Price = storeService.ServicePrice * item.Weight
                         };
-                        await _orderDetailRepository.CreateOrderDetailRepositoryAsync(newOrderDetail);
+                        if (await _orderDetailRepository.CreateOrderDetailRepositoryAsync(newOrderDetail))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     return true;
                 }
