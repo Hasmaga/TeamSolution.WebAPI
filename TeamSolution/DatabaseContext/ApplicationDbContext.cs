@@ -153,6 +153,18 @@ namespace TeamSolution.DatabaseContext
             modelBuilder.Entity<StoreService>()
                 .Property(ss => ss.ServicePrice)
                 .HasColumnType("decimal(18,2)");
+
+            // Cofig TourShipOrder in TourShipper
+            modelBuilder.Entity<TourShipper>()
+                .HasMany(ts => ts.TourShipOrders)
+                .WithOne(o => o.TourShipOrder)
+                .HasForeignKey(o => o.TourShipOrderId);
+
+            // Cofig TourGetOrder in TourShipper
+            modelBuilder.Entity<TourShipper>()
+                .HasMany(ts => ts.TourGetOrders)
+                .WithOne(o => o.TourGetOrder)
+                .HasForeignKey(o => o.TourGetOrderId);
         }
 
         public DbSet<Account> Accounts { get; set; }

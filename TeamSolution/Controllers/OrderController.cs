@@ -34,7 +34,7 @@ namespace TeamSolution.Controllers
                     return StatusCode(500, ErrorCode.CREATE_ORDER_FAIL);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
