@@ -3,7 +3,7 @@
     public class ApplicationConstants
     {
         //public const string ID_EXISTED = "KeyId {0} đã tồn tại.";
-        public const string DUPLICATE = "Symtem_id is duplicated";
+        //public const string DUPLICATE = "Symtem_id is duplicated";
     }
 
     public class ResponseCodeConstants

@@ -27,29 +27,30 @@ namespace TeamSolution.Service
         }
         public Task<Guid> CreateStoreAsync(StoreModel store)
         {
-            var entity = new Store(
-                storeName:store.StoreName,
-                storeDescription:store.StoreDescription,
-                address:store.Address,
-                phone:store.Address,
-                storeManagerId:store.StoreManagerId,
-                storeAvalability:false,
-                operationTime:null,
-                createDateTime:DateTime.Now,
-                deleteDateTime:null,
-                isDelete:false,
-                storeImage:null,
-                storeRating:null
-                );
+            var entity = new Store
+            {
+                StoreName = store.StoreName,
+                StoreDescription = store.StoreDescription,
+                Address = store.Address,
+                StoreManagerId = store.StoreManagerId,
+                OperationTime = store.OperationTime,
+                StoreImage = store.StoreImage
+            };
             return _storeRepository.CreateAsync(entity);
         }
         public Task<Guid> UpdateStoreAsync(UpdateStoreRequestModel updateStoreRequest)
         {
-            return _storeRepository.UpdateAsync(updateStoreRequest);
+            Store store = new Store();
+            _mapper.Map(updateStoreRequest.StoreModel, store);
+            store.UpdateDateTime= DateTime.Now;
+            return _storeRepository.UpdateAsync(store);
         }
         public Task<Guid> DeleteStoreAsync(Guid id)
         {
-            return _storeRepository.DeleteAsync(id);
+            Store store = new Store();
+            store.Id = id;
+            store.DeleteDateTime = DateTime.Now;
+            return _storeRepository.DeleteAsync(store);
         }
     }
 }
