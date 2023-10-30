@@ -101,12 +101,33 @@ namespace TeamSolution.Service
 
         public async Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request)
         {
-
-            return await _orderRepository.UpdateRepositoryAsync(request);
+            if(request.orderModel.TimeTakeOrder == null)
+            {
+                request.orderModel.TimeTakeOrder = new DateTime();
+            }
+            if (request.orderModel.TimeDeliverOrder == null)
+            {
+                request.orderModel.TimeDeliverOrder = new DateTime();
+            }
+            Order order = new Order
+            {
+                Id= request.id,
+                OrderAddress = request.orderModel.OrderAddress ?? "",
+                PhoneCustomer = request.orderModel.PhoneCustomer ?? "",
+                TimeTakeOrder = (DateTime) request.orderModel.TimeTakeOrder,
+                TimeDeliverOrder = (DateTime) request.orderModel.TimeDeliverOrder,
+                UpdateDateTime = DateTime.Now     
+            };
+            return await _orderRepository.UpdateRepositoryAsync(order);
         }
         public async Task<Guid> DeleteOrderServiceAsync(Guid id)
         {
-            return await _orderRepository.DeleteRepositoryAsync(id);
+            Order order = new Order
+            {
+                Id = id,
+                DeleteDateTime = DateTime.Now
+            };
+            return await _orderRepository.DeleteRepositoryAsync(order);
         }
 
         public async Task<ICollection<Order>> GetByCustomerIdServiceAsync(Guid id)

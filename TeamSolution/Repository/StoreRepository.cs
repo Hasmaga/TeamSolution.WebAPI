@@ -40,7 +40,7 @@ namespace TeamSolution.Repository
                 var queryable = _context.Stores.AsNoTracking();
                 if(!includeIsDeleted)
                 {
-                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                    queryable = queryable.Where(s => s.DeleteDateTime == null);
                 }
                 ICollection<Store> list = await queryable.ToListAsync();
                 return list;
@@ -75,7 +75,7 @@ namespace TeamSolution.Repository
                     //NOT FOUND
                     return Guid.Empty;
                 }
-                if (entity.IsDelete)
+                if (entity.DeleteDateTime != null)
                 {
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
                 }
@@ -121,7 +121,7 @@ namespace TeamSolution.Repository
                     //NOT FOUND
                     return Guid.Empty;
                 }
-                if (entity.IsDelete)
+                if (entity.DeleteDateTime != null)
                 {
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
                 }

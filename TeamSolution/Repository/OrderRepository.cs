@@ -6,6 +6,8 @@ using TeamSolution.Enum;
 using TeamSolution.ViewModel.Order;
 using AutoMapper;
 using System.Linq;
+using MailKit.Search;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace TeamSolution.Repository
 {
@@ -43,10 +45,11 @@ namespace TeamSolution.Repository
         {
             try
             {
+                _logger.LogInformation("Get all orders");
                 var queryable = _context.Orders.AsNoTracking();
                 if (!includeIsDeleted)
                 {
-                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                    queryable = queryable.Where(o => o.DeleteDateTime == null);
                 }
                 ICollection<Order> list = await queryable.ToListAsync();
                 return list;
@@ -61,6 +64,7 @@ namespace TeamSolution.Repository
         {
             try
             {
+                _logger.LogInformation("Get order with ID:" + id);
                 return await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
             }
             catch (Exception)
@@ -73,10 +77,11 @@ namespace TeamSolution.Repository
         {
             try
             {
+                _logger.LogInformation("Get order with Customer ID:" + id);
                 var queryable = _context.Orders.Where(x => x.CustomerId == id);
                 if (!includeIsDeleted)
                 {
-                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                    queryable = queryable.Where(o => o.DeleteDateTime == null);
                 }
                 return await queryable.ToListAsync();
             }
@@ -90,10 +95,11 @@ namespace TeamSolution.Repository
         {
             try
             {
+                _logger.LogInformation("Get order with Store ID:" + id);
                 var queryable = _context.Orders.Where(x => x.StoreId == id);
                 if (!includeIsDeleted)
                 {
-                    queryable = queryable.Where(_ => _.IsDelete == includeIsDeleted);
+                    queryable = queryable.Where(o => o.DeleteDateTime == null);
                 }
                 return await queryable.ToListAsync();
             }
@@ -103,23 +109,38 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<Guid> UpdateRepositoryAsync(UpdateOrderRequestModel request, CancellationToken cancellationToken = default)
+        public async Task<Guid> UpdateRepositoryAsync(Order order, CancellationToken cancellationToken = default)
         {
             try
             {
-                _logger.LogInformation("Delete order with ID:" + request.id);
-                var entity = await _context.Orders.FindAsync(new object[] { request.id }, cancellationToken);
+                _logger.LogInformation("Delete order with ID:" + order.Id);
+                var entity = await _context.Orders.FindAsync(new object[] { order.Id }, cancellationToken);
                 if (entity == null)
                 {
                     //NOT FOUND
                     return Guid.Empty;
                 }
-                if (entity.IsDelete)
+                if (entity.DeleteDateTime != null)
                 {
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
                 }
-                _mapper.Map(request.orderModel, entity);
-                entity.UpdateDateTime= DateTime.UtcNow;
+                if(!string.IsNullOrEmpty(order.OrderAddress))
+                {
+                    entity.OrderAddress = order.OrderAddress;
+                }
+                if (!string.IsNullOrEmpty(order.PhoneCustomer))
+                {
+                    entity.PhoneCustomer = order.PhoneCustomer;
+                }
+                if(order.TimeTakeOrder != new DateTime())
+                {
+                    entity.TimeTakeOrder= order.TimeTakeOrder;
+                }
+                if (order.TimeDeliverOrder != new DateTime())
+                {
+                    entity.TimeDeliverOrder = order.TimeDeliverOrder;
+                }
+                entity.UpdateDateTime= order.UpdateDateTime;
                 await _context.SaveChangesAsync();
                 return entity.Id;
             }
@@ -128,23 +149,22 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<Guid> DeleteRepositoryAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Guid> DeleteRepositoryAsync(Order order, CancellationToken cancellationToken = default)
         {
             try
             {
-                _logger.LogInformation("Delete order with ID:" + id);
-                var entity = await _context.Orders.FindAsync(new object[] { id }, cancellationToken);
+                _logger.LogInformation("Delete order with ID:" + order.Id);
+                var entity = await _context.Orders.FindAsync(new object[] { order.Id }, cancellationToken);
                 if (entity == null)
                 {
                     //NOT FOUND
                     return Guid.Empty;
                 }
-                if (entity.IsDelete)
+                if (entity.DeleteDateTime != null)
                 {
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
                 }
-                entity.IsDelete = true;
-                entity.DeleteDateTime = DateTime.UtcNow;
+                entity.DeleteDateTime = order.DeleteDateTime;
                 await _context.SaveChangesAsync();
                 return entity.Id;
             }
