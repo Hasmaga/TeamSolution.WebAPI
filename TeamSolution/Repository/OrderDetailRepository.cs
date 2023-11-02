@@ -1,6 +1,7 @@
 ﻿using TeamSolution.Repository.Interface;
 using TeamSolution.DatabaseContext;
 using TeamSolution.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeamSolution.Repository
 {
@@ -29,6 +30,27 @@ namespace TeamSolution.Repository
                 _logger.LogError("Error Create Order Detail At Repository: " + ex.ToString());
                 throw;
             }
+        }
+        public async Task<OrderDetail> GetOrderDetailByIdAsync(Guid orderDetailId)
+        {
+            return await _context.OrderDetails.FirstOrDefaultAsync(od => od.Id == orderDetailId);
+        }
+
+        public async Task UpdateOrderDetailAsync(OrderDetail orderDetail)
+        {
+            // Thực hiện cập nhật OrderDetail ở đây
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Guid?> GetStatusOrderIdByOrderDetailId(Guid orderDetailId)
+        {
+            // Use DbSet to query the database and retrieve the StatusOrderId
+            var statusOrderId = await _context.OrderDetails
+                .Where(od => od.Id == orderDetailId) // Assuming Id is the primary key of OrderDetail
+                .Select(od => od.Order.StatusOrderId)
+                .FirstOrDefaultAsync();
+
+            return statusOrderId;
         }
     }
 }
