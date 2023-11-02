@@ -8,6 +8,7 @@ using AutoMapper;
 using System.Linq;
 using MailKit.Search;
 using Org.BouncyCastle.Asn1.X509;
+using TeamSolution.Helper;
 
 namespace TeamSolution.Repository
 {
@@ -132,11 +133,11 @@ namespace TeamSolution.Repository
                 {
                     entity.PhoneCustomer = order.PhoneCustomer;
                 }
-                if(order.TimeTakeOrder != new DateTime())
+                if(order.TimeTakeOrder != CoreHelper.DefaultTime)
                 {
                     entity.TimeTakeOrder= order.TimeTakeOrder;
                 }
-                if (order.TimeDeliverOrder != new DateTime())
+                if (order.TimeDeliverOrder != CoreHelper.DefaultTime)
                 {
                     entity.TimeDeliverOrder = order.TimeDeliverOrder;
                 }

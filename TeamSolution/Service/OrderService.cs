@@ -5,6 +5,7 @@ using System.Security.Claims;
 using TeamSolution.Enum;
 using TeamSolution.ViewModel.Order;
 using TeamSolution.ViewModel.Store;
+using TeamSolution.Helper;
 
 namespace TeamSolution.Service
 {
@@ -103,20 +104,20 @@ namespace TeamSolution.Service
         {
             if(request.orderModel.TimeTakeOrder == null)
             {
-                request.orderModel.TimeTakeOrder = new DateTime();
+                request.orderModel.TimeTakeOrder = CoreHelper.DefaultTime;
             }
             if (request.orderModel.TimeDeliverOrder == null)
             {
-                request.orderModel.TimeDeliverOrder = new DateTime();
+                request.orderModel.TimeDeliverOrder = CoreHelper.DefaultTime;
             }
             Order order = new Order
             {
                 Id= request.id,
-                OrderAddress = request.orderModel.OrderAddress ?? "",
-                PhoneCustomer = request.orderModel.PhoneCustomer ?? "",
+                OrderAddress = request.orderModel.OrderAddress ?? CoreHelper.DefaultEmptyString,
+                PhoneCustomer = request.orderModel.PhoneCustomer ?? CoreHelper.DefaultEmptyString,
                 TimeTakeOrder = (DateTime) request.orderModel.TimeTakeOrder,
                 TimeDeliverOrder = (DateTime) request.orderModel.TimeDeliverOrder,
-                UpdateDateTime = DateTime.Now     
+                UpdateDateTime = CoreHelper.SystemTimeNow
             };
             return await _orderRepository.UpdateRepositoryAsync(order);
         }
@@ -125,7 +126,7 @@ namespace TeamSolution.Service
             Order order = new Order
             {
                 Id = id,
-                DeleteDateTime = DateTime.Now
+                DeleteDateTime = CoreHelper.SystemTimeNow
             };
             return await _orderRepository.DeleteRepositoryAsync(order);
         }
