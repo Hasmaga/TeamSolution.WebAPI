@@ -174,5 +174,29 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+
+        [HttpPut("updateProfile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfileUser([FromBody] UpdateProfileCustomerReqDto model)
+        {
+            try
+            {
+                var success = await _accountService.UpdateProfileUserAsync(model);
+
+                if (success)
+                {
+                    return StatusCode(200, SucessfulCode.UPDATE_PROFILE_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.UPDATE_PROFILE_FAIL);
+                }
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+
     }
 }

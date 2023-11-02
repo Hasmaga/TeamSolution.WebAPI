@@ -260,8 +260,49 @@ namespace TeamSolution.Service
             return true;           
         }
 
-        #region Private Methods
-        private string CreatePasswordHash(string password, out byte[] passwordSalt)
+        public async Task<bool> UpdateProfileUserAsync(UpdateProfileCustomerReqDto model)
+        {
+            try
+            {
+                var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+
+                if (user == null)
+                {
+                    throw new Exception(ErrorCode.USER_NOT_FOUND);
+                }
+
+                if(model.FirstName != null)
+                {
+                    user.FirstName = model.FirstName;
+                }
+                if (model.LastName != null)
+                {
+                    user.LastName = model.LastName;
+                }
+                if (model.PhoneNumber != null)
+                {
+                    user.PhoneNumber = model.PhoneNumber;
+                }
+                if (model.Address != null)
+                {
+                    user.Address = model.Address;
+                }
+
+                if (await _accountRepository.UpdateUserAsync(user))
+                {
+                    return true;
+                }
+                else return false;
+                
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+            #region Private Methods
+            private string CreatePasswordHash(string password, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
