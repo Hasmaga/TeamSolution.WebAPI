@@ -42,7 +42,7 @@ namespace TeamSolution.Repository
 
         
 
-        public async Task<ICollection<Order>> GetAllRepositoryAsync(bool includeIsDeleted)
+        public async Task<ICollection<Order>> GetAllOrdersRepositoryAsync(bool includeIsDeleted)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace TeamSolution.Repository
             }
         }
 
-        public async Task<Order> GetByIdRepositoryAsync(Guid id)
+        public async Task<Order> GetOrderByIdRepositoryAsync(Guid id)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<ICollection<Order>> GetByCustomerIdRepositoryAsync(Guid id, bool includeIsDeleted)
+        public async Task<ICollection<Order>> GetOrdersByCustomerIdRepositoryAsync(Guid id, bool includeIsDeleted)
         {
             try
             {
@@ -92,7 +92,7 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<ICollection<Order>> GetByStoreIdRepositoryAsync(Guid id, bool includeIsDeleted)
+        public async Task<ICollection<Order>> GetOrdersByStoreIdRepositoryAsync(Guid id, bool includeIsDeleted)
         {
             try
             {
@@ -110,11 +110,37 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<Guid> UpdateRepositoryAsync(Order order, CancellationToken cancellationToken = default)
+        public async Task<Guid> UpdateOrderStateRepositoryAsync(Order order, CancellationToken cancellationToken = default)
+        {
+           
+            try
+            {
+                _logger.LogInformation("Update order state with ID:" + order.Id);
+                var entity = await _context.Orders.FindAsync(new object[] { order.Id }, cancellationToken);
+                if (entity == null)
+                {
+                    //NOT FOUND
+                    return Guid.Empty;
+                }
+                if (entity.DeleteDateTime != null)
+                {
+                    throw new Exception(ResponseCodeConstants.IS_DELETED);
+                }
+                entity.StatusOrderId = order.StatusOrderId;
+                entity.UpdateDateTime = order.UpdateDateTime;
+                await _context.SaveChangesAsync();
+                return entity.Id;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public async Task<Guid> UpdateOrderRepositoryAsync(Order order, CancellationToken cancellationToken = default)
         {
             try
             {
-                _logger.LogInformation("Delete order with ID:" + order.Id);
+                _logger.LogInformation("Update order with ID:" + order.Id);
                 var entity = await _context.Orders.FindAsync(new object[] { order.Id }, cancellationToken);
                 if (entity == null)
                 {
@@ -150,7 +176,7 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        public async Task<Guid> DeleteRepositoryAsync(Order order, CancellationToken cancellationToken = default)
+        public async Task<Guid> DeleteOrderRepositoryAsync(Order order, CancellationToken cancellationToken = default)
         {
             try
             {

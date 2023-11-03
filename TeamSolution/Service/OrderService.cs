@@ -92,12 +92,12 @@ namespace TeamSolution.Service
         }
         public async Task<ICollection<Order>> GetAllOrderServiceAsync()
         {
-            return await _orderRepository.GetAllRepositoryAsync();
+            return await _orderRepository.GetAllOrdersRepositoryAsync();
         }
 
         public async Task<Order> GetOrderByIdServiceAsync(Guid id)
         {
-            return await _orderRepository.GetByIdRepositoryAsync(id);
+            return await _orderRepository.GetOrderByIdRepositoryAsync(id);
         }
 
         public async Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request)
@@ -119,7 +119,7 @@ namespace TeamSolution.Service
                 TimeDeliverOrder = (DateTime) request.orderModel.TimeDeliverOrder,
                 UpdateDateTime = CoreHelper.SystemTimeNow
             };
-            return await _orderRepository.UpdateRepositoryAsync(order);
+            return await _orderRepository.UpdateOrderRepositoryAsync(order);
         }
         public async Task<Guid> DeleteOrderServiceAsync(Guid id)
         {
@@ -128,17 +128,17 @@ namespace TeamSolution.Service
                 Id = id,
                 DeleteDateTime = CoreHelper.SystemTimeNow
             };
-            return await _orderRepository.DeleteRepositoryAsync(order);
+            return await _orderRepository.DeleteOrderRepositoryAsync(order);
         }
 
         public async Task<ICollection<Order>> GetByCustomerIdServiceAsync(Guid id)
         {
-            return await _orderRepository.GetByCustomerIdRepositoryAsync(id);
+            return await _orderRepository.GetOrdersByCustomerIdRepositoryAsync(id);
         }
 
         public async Task<ICollection<Order>> GetByStoreIdServiceAsync(Guid id)
         {
-            return await _orderRepository.GetByStoreIdRepositoryAsync(id);
+            return await _orderRepository.GetOrdersByStoreIdRepositoryAsync(id);
         }
         #region private method
         private Guid GetSidLogged()

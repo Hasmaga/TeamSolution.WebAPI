@@ -4,7 +4,6 @@ using TeamSolution.Enum;
 using TeamSolution.Model;
 using TeamSolution.Service.Interface;
 using TeamSolution.ViewModel.Order;
-using TeamSolution.ViewModel.Order;
 
 namespace TeamSolution.Controllers
 {
