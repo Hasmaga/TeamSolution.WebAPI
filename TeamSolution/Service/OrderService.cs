@@ -89,6 +89,37 @@ namespace TeamSolution.Service
             }
         }
 
+        
+
+        public async Task<string?> GetStatusNameByOrderIdServiceAsync(Guid orderId)
+        {
+            _logger.LogInformation("GetStatusNameByOrderIdServiceAsync");
+
+            try
+            {
+                var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                if (userLogged == null) {
+                    throw new Exception(ErrorCode.NOT_AUTHORIZED);
+                }
+
+                var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+                if (order != null)
+                {
+                    var statusid = order.StatusOrderId;
+                    var status = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(statusid);
+                    return status;
+                }
+                else              
+                    return null;              
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"Error at: {ex} " );
+                throw;
+            }
+        }
+
 
         #region private method
         private Guid GetSidLogged()

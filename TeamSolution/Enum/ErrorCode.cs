@@ -17,5 +17,8 @@
         public const string OTP_CODE_NOT_MATCH = "OTP_CODE_NOT_MATCH";
         public const string CREATE_ORDER_FAIL = "CREATE_ORDER_FAIL";
         public const string UPDATE_PROFILE_FAIL = "UPDATE_PROFILE_FAIL";
+        public const string ORDER_NOT_FOUND = "ORDER_NOT_FOUND";
+        public const string SHIPPERS_NOT_FOUND = "SHIPPERS_NOT_FOUND";
+
     }
 }

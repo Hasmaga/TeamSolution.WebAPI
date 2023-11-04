@@ -1,6 +1,7 @@
 ﻿using TeamSolution.Repository.Interface;
 using TeamSolution.DatabaseContext;
 using TeamSolution.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeamSolution.Repository
 {
@@ -28,6 +29,11 @@ namespace TeamSolution.Repository
                 _logger.LogError("Error Create Order At Repository: " + ex.ToString());
                 throw;
             }
+        }
+
+        public async Task<Order?> GetOrderByIdAsync(Guid orderId)
+        {
+            return await _context.Orders.FirstOrDefaultAsync(od => od.Id == orderId);
         }
     }
 }

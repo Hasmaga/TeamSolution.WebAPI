@@ -301,8 +301,13 @@ namespace TeamSolution.Service
             }
         }
 
-            #region Private Methods
-            private string CreatePasswordHash(string password, out byte[] passwordSalt)
+        public async Task<List<Account>> GetShippersByRoleAndAvailabilityAsync(string roleName)
+        {
+            return await _accountRepository.GetShippersByRoleAndAvailabilityAsync(roleName);
+        }
+
+        #region Private Methods
+        private string CreatePasswordHash(string password, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
@@ -377,7 +382,7 @@ namespace TeamSolution.Service
         {
             var otpCode = new Random().Next(100000, 999999).ToString();
             return otpCode;
-        }        
+        }
         #endregion
     }
 }

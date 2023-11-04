@@ -37,5 +37,29 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+
+        [HttpGet("{orderId}/status")]
+        [Authorize]
+        public async Task<IActionResult> GetStatusNameByOrderId(Guid orderId)
+        {
+            try
+            {
+                var statusName = await _orderService.GetStatusNameByOrderIdServiceAsync(orderId);
+
+                if (statusName != null)
+                {                   
+                    return StatusCode(200, statusName);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.ORDER_NOT_FOUND);
+                    
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
     }
 }

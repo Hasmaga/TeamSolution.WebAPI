@@ -10,5 +10,6 @@ namespace TeamSolution.Repository.Interface
         Task<Account> GetUserByIdAsync(Guid id);
         Task<bool> CheckEmailIsExist(string email);
         Task<bool> UpdateUserAsync(Account user);
+        Task<List<Account>> GetShippersByRoleAndAvailabilityAsync(string roleName);
     }
 }

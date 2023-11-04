@@ -93,5 +93,13 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+
+        public async Task<List<Account>> GetShippersByRoleAndAvailabilityAsync(string roleName)
+        {
+            return await _context.Accounts
+                .Include(a => a.Role)
+                .Where(a => a.Role.RoleName == roleName && a.ShipperAvalability == true)
+                .ToListAsync();
+        }
     }
 }

@@ -35,5 +35,24 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+
+        public async Task<String> GetStatusNameByStatusIdRepositoryAsync(Guid statusId)
+        {
+            try
+            {
+                _logger.LogInformation("(StatusRepository)FindStatusNameByIdAsync: " + statusId);
+                var status = await _context.Statuses.FirstOrDefaultAsync(x => x.Id == statusId);
+                if (status != null)
+                {
+                    return status.StatusName;
+                }
+                return String.Empty;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("(StatusRepository)Error find status: " + statusId + ex);
+                throw;
+            }
+        }
     }
 }

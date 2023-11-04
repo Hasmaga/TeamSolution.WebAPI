@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TeamSolution.Enum;
+using TeamSolution.Model;
 using TeamSolution.Service.Interface;
 using TeamSolution.ViewModel.Account;
 
@@ -198,5 +199,25 @@ namespace TeamSolution.Controllers
             }
         }
 
+
+
+        [HttpGet($"getallshippers")]
+        public async Task<IActionResult> GetShippersAsync()
+        {
+            try
+            {
+                string roleName = ActorEnumCode.SHIPPER.ToString();
+                var shippers = await _accountService.GetShippersByRoleAndAvailabilityAsync(roleName);
+                if(shippers != null)
+                {
+                    return StatusCode(200, shippers);
+                }
+                else return StatusCode(500, ErrorCode.SHIPPERS_NOT_FOUND);
+            }
+            catch(Exception) 
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
     }
 }

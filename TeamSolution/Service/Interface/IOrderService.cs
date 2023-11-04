@@ -5,5 +5,7 @@ namespace TeamSolution.Service.Interface
     public interface IOrderService
     {
         Task<bool> CreateOrderServiceAsync(CreateNewOrderReqDto order);
+        Task<string?> GetStatusNameByOrderIdServiceAsync(Guid orderId);
+
     }
 }
