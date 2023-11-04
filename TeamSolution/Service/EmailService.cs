@@ -29,7 +29,7 @@ namespace TeamSolution.Service
                 {
                     smtp.Connect("smtp.gmail.com", 587, false);
                     // Note: only needed if the SMTP server requires authentication
-                    smtp.Authenticate("khangbpakspotify1@gmail.com", "csqeyaojxbspsrfk");
+                    smtp.Authenticate("khangbpakspotify1@gmail.com", "tcanehdstjsbekri");
                     smtp.Send(email);
                     smtp.Disconnect(true);
                 }
