@@ -34,23 +34,23 @@ namespace TeamSolution.Service
                 Address = store.Address,
                 StoreManagerId = store.StoreManagerId,
                 OperationTime = store.OperationTime,
-                StoreImage = store.StoreImage,
-
-            };                
+                StoreImage = store.StoreImage
+            };
             return _storeRepository.CreateAsync(entity);
         }
         public Task<Guid> UpdateStoreAsync(UpdateStoreRequestModel updateStoreRequest)
         {
-            return _storeRepository.UpdateAsync(updateStoreRequest);
+            Store store = new Store();
+            _mapper.Map(updateStoreRequest.StoreModel, store);
+            store.UpdateDateTime= DateTime.Now;
+            return _storeRepository.UpdateAsync(store);
         }
         public Task<Guid> DeleteStoreAsync(Guid id)
         {
-            return _storeRepository.DeleteAsync(id);
-        }
-
-        public Task<bool> CreateStoreRepository(Store store)
-        {
-            throw new NotImplementedException();
+            Store store = new Store();
+            store.Id = id;
+            store.DeleteDateTime = DateTime.Now;
+            return _storeRepository.DeleteAsync(store);
         }
     }
 }

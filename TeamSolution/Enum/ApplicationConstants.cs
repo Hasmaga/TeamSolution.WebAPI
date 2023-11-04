@@ -3,7 +3,7 @@
     public class ApplicationConstants
     {
         //public const string ID_EXISTED = "KeyId {0} đã tồn tại.";
-        public const string DUPLICATE = "Symtem_id is duplicated";
+        //public const string DUPLICATE = "Symtem_id is duplicated";
     }
 
     public class ResponseCodeConstants
@@ -26,5 +26,16 @@
         public const string CREATE_STORE_FAILED = "CREATE_STORE_FAILED";
         public const string UPDATE_STORE_FAILED = "UPDATE_STORE_FAILED";
         public const string DELETE_STORE_FAILED = "DELETE_STORE_FAILED";
+    }
+    public class ResponseCodeConstantsOrder
+    {
+        public const string ORDER = "ORDER";
+        public const string CREATE_ORDER_SUCCESSFULLY = "CREATE_ORDER_SUCCESSFULLY";
+        public const string UPDATE_ORDER_SUCCESSFULLY = "UPDATE_ORDER_SUCCESSFULLY";
+        public const string DELETE_ORDER_SUCCESSFULLY = "DELETE_ORDER_SUCCESSFULLY";
+
+        public const string CREATE_ORDER_FAILED = "CREATE_ORDER_FAILED";
+        public const string UPDATE_ORDER_FAILED = "UPDATE_ORDER_FAILED";
+        public const string DELETE_ORDER_FAILED = "DELETE_ORDER_FAILED";
     }
 }
