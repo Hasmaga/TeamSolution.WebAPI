@@ -118,6 +118,25 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+        [HttpGet("GetListOrderByStoreIdAndStatus")]
+        [Authorize]
+        public async Task<IActionResult> GetOrdersByStoreIdAndStatus(Guid storeId, string status)
+        {
+            try
+            {
+                var result = await _orderService.GetByStoreIdAndStatusServiceAsync(storeId,status);
+                if (result?.Count == 0)
+                {
+                    return StatusCode(200, ResponseCodeConstants.EMPTY);
+                }
+
+                return StatusCode(200, result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
         [HttpPut("Update")]
         [Authorize]
         public async Task<IActionResult> UpdateOrder(UpdateOrderRequestModel updateOrderRequest)
@@ -125,6 +144,31 @@ namespace TeamSolution.Controllers
             try
             {
                 if (await _orderService.UpdateOrderServiceAsync(updateOrderRequest) != Guid.Empty)
+                {
+                    return StatusCode(200, ResponseCodeConstantsOrder.UPDATE_ORDER_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsOrder.ORDER + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == ResponseCodeConstants.IS_DELETED)
+                {
+                    // Undefine status code
+                    return StatusCode(500, ResponseCodeConstants.IS_DELETED);
+                }
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+        [HttpPut("UpdateOrderStatusForStore")]
+        [Authorize]
+        public async Task<IActionResult> UpdateOrderStatusForStore(Guid orderId, string orderStatus)
+        {
+            try
+            {
+                if (await _orderService.UpdateOrderStateServiceAsync(orderId, orderStatus) != Guid.Empty)
                 {
                     return StatusCode(200, ResponseCodeConstantsOrder.UPDATE_ORDER_SUCCESSFULLY);
                 }
