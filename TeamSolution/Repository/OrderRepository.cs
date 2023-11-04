@@ -1,6 +1,7 @@
 ﻿using TeamSolution.Repository.Interface;
 using TeamSolution.DatabaseContext;
 using TeamSolution.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeamSolution.Repository
 {
@@ -26,6 +27,28 @@ namespace TeamSolution.Repository
             } catch (Exception ex)
             {
                 _logger.LogError("Error Create Order At Repository: " + ex.ToString());
+                throw;
+            }
+        }
+
+        public async Task<Order?> GetOrderByOrderIdRepositoryAsync(Guid orderId)
+        {
+            _logger.LogInformation($"Get Order by OrderId: {orderId}");
+            try
+            {
+                var order = await _context.Orders.FindAsync(orderId);
+                if (order != null)
+                {
+                    return order;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error at get order by orderId repository: {ex}");
                 throw;
             }
         }

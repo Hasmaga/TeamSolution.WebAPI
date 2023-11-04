@@ -54,7 +54,7 @@ namespace TeamSolution.Service
                     StoreId = order.StoreId,
                     TimeTakeOrder = order.TimeTakeOrder,
                     TimeDeliverOrder = order.TimeDeliveryOrder,
-                    StatusOrderId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_FOR_CONFIRMATION)
+                    StatusOrderId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_STORE_ACCEPT)
                 };
                 if (await _orderRepository.CreateOrderRepositoryAsync(newOrder))
                 {
