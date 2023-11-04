@@ -13,5 +13,6 @@ namespace TeamSolution.Service.Interface
         Task<ICollection<Order>> GetByStoreIdServiceAsync(Guid id);
         Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request);
         Task<Guid> DeleteOrderServiceAsync(Guid id);
+        Task<List<OderReadyToTakeDto>> GetOrdersWithStatusReadyTakeOrderAsync();
     }
 }

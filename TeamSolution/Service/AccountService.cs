@@ -301,9 +301,25 @@ namespace TeamSolution.Service
             }
         }
 
-        public async Task<List<Account>> GetShippersByRoleAndAvailabilityAsync(string roleName)
+        public async Task<List<GetshipperDto>> GetShippersByRoleAndAvailabilityAsync()
         {
-            return await _accountRepository.GetShippersByRoleAndAvailabilityAsync(roleName);
+            _logger.LogInformation("GetShippersByRoleAndAvailabilityAsync");
+            try
+            {
+                var accounts = await _accountRepository.GetShippersByRoleAndAvailabilityAsync(ActorEnumCode.SHIPPER);
+                var shippersDto = accounts.Select(account => new GetshipperDto
+                {
+                    ShipperId = account.Id,
+                    ShipperName = $"{account.FirstName} {account.LastName}",
+                    ShipperAvability = account.ShipperAvalability ?? false
+                }).ToList();
+
+                return shippersDto;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         #region Private Methods

@@ -222,6 +222,38 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-        
+
+        public async Task<List<Order>> GetOrdersWithStatusAsync(string status)
+        {
+            _logger.LogInformation("GetOrdersWithStatusAsync");
+            try
+            {
+                return await _context.Orders
+                     .Where(order => order.StatusOrder.StatusName == status)
+                     .Include(order => order.Store)
+                     .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateOrderWithToGetOrderId(Guid orderId, Guid tourGetOrderId)
+        {
+            try
+            {
+                var order = await _context.Orders.FindAsync(orderId);
+                order.TourGetOrderId = tourGetOrderId;
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+                return true;
+                    
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

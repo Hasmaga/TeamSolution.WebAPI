@@ -202,13 +202,13 @@ namespace TeamSolution.Controllers
 
 
         [HttpGet($"getallshippers")]
+        [Authorize]
         public async Task<IActionResult> GetShippersAsync()
         {
             try
             {
-                string roleName = ActorEnumCode.SHIPPER.ToString();
-                var shippers = await _accountService.GetShippersByRoleAndAvailabilityAsync(roleName);
-                if(shippers != null)
+                var shippers = await _accountService.GetShippersByRoleAndAvailabilityAsync();
+                if(shippers.Count > 0)
                 {
                     return StatusCode(200, shippers);
                 }

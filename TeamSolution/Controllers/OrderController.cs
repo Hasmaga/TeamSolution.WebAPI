@@ -170,28 +170,24 @@ namespace TeamSolution.Controllers
             }
         }
 
-        [HttpGet("{orderId}/status")]
+        [HttpGet("ready_take_order")]
         [Authorize]
-        public async Task<IActionResult> GetStatusNameByOrderId(Guid orderId)
+        public async Task<ActionResult<IEnumerable<OderReadyToTakeDto>>>GetOrdersWithStatusReadyTakeOrderAsync()
         {
             try
             {
-                var statusName = await _orderService.GetStatusNameByOrderIdServiceAsync(orderId);
-
-                if (statusName != null)
-                {                   
-                    return StatusCode(200, statusName);
-                }
-                else
+                var orders = await _orderService.GetOrdersWithStatusReadyTakeOrderAsync();
+                if (orders.Count > 0)
                 {
-                    return StatusCode(500, ErrorCode.ORDER_NOT_FOUND);
-                    
+                    return StatusCode(200, orders);
                 }
+                else return StatusCode(500, ResponseCodeConstants.EMPTY);
             }
             catch (Exception)
             {
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
+            
         }
     }
 }

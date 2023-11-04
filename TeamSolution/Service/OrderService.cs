@@ -140,6 +140,28 @@ namespace TeamSolution.Service
         {
             return await _orderRepository.GetOrdersByStoreIdRepositoryAsync(id);
         }
+        public async Task<List<OderReadyToTakeDto>> GetOrdersWithStatusReadyTakeOrderAsync()
+        {
+            _logger.LogInformation("GetOrdersWithStatusReadyTakeOrderAsync");
+            try
+            {
+                var orders = await _orderRepository.GetOrdersWithStatusAsync(StatusOrderEnumCode.READY_TAKE_ORDER);
+                var result = orders.Select(order => new OderReadyToTakeDto
+                {
+                    OrderId = order.Id,
+                    OrderAddress = order.OrderAddress,
+                    PhoneCustomer = order.PhoneCustomer,
+                    StoreName = order.Store?.StoreName,
+                    TimeTakeOrder = order.TimeTakeOrder
+                }).ToList();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         #region private method
         private Guid GetSidLogged()
         {

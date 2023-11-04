@@ -15,5 +15,7 @@ namespace TeamSolution.Repository.Interface
         Task<Guid> DeleteOrderRepositoryAsync(Order order, CancellationToken cancellationToken = default);
         
         Task<Order?> GetOrderByOrderIdRepositoryAsync(Guid orderId);
+        Task<List<Order>> GetOrdersWithStatusAsync(string status);
+        Task<bool> UpdateOrderWithToGetOrderId(Guid orderId, Guid tourGetOrderId);
     }
 }
