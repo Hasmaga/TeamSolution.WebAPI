@@ -4,6 +4,8 @@ using TeamSolution.Model;
 using System.Security.Claims;
 using TeamSolution.Enum;
 using TeamSolution.ViewModel.Order;
+using TeamSolution.ViewModel.Store;
+using TeamSolution.Helper;
 
 namespace TeamSolution.Service
 {
@@ -54,7 +56,7 @@ namespace TeamSolution.Service
                     StoreId = order.StoreId,
                     TimeTakeOrder = order.TimeTakeOrder,
                     TimeDeliverOrder = order.TimeDeliveryOrder,
-                    StatusOrderId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_FOR_CONFIRMATION)
+                    StatusOrderId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_STORE_ACCEPT)
                 };
                 if (await _orderRepository.CreateOrderRepositoryAsync(newOrder))
                 {
@@ -88,39 +90,56 @@ namespace TeamSolution.Service
                 throw;
             }
         }
-
-        
-
-        public async Task<string?> GetStatusNameByOrderIdServiceAsync(Guid orderId)
+        public async Task<ICollection<Order>> GetAllOrderServiceAsync()
         {
-            _logger.LogInformation("GetStatusNameByOrderIdServiceAsync");
-
-            try
-            {
-                var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
-                if (userLogged == null) {
-                    throw new Exception(ErrorCode.NOT_AUTHORIZED);
-                }
-
-                var order = await _orderRepository.GetOrderByIdAsync(orderId);
-
-                if (order != null)
-                {
-                    var statusid = order.StatusOrderId;
-                    var status = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(statusid);
-                    return status;
-                }
-                else              
-                    return null;              
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError($"Error at: {ex} " );
-                throw;
-            }
+            return await _orderRepository.GetAllOrdersRepositoryAsync();
         }
 
+        public async Task<Order> GetOrderByIdServiceAsync(Guid id)
+        {
+            return await _orderRepository.GetOrderByIdRepositoryAsync(id);
+        }
 
+        public async Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request)
+        {
+            if(request.orderModel.TimeTakeOrder == null)
+            {
+                request.orderModel.TimeTakeOrder = CoreHelper.DefaultTime;
+            }
+            if (request.orderModel.TimeDeliverOrder == null)
+            {
+                request.orderModel.TimeDeliverOrder = CoreHelper.DefaultTime;
+            }
+            Order order = new Order
+            {
+                Id= request.id,
+                OrderAddress = request.orderModel.OrderAddress ?? CoreHelper.DefaultEmptyString,
+                PhoneCustomer = request.orderModel.PhoneCustomer ?? CoreHelper.DefaultEmptyString,
+                TimeTakeOrder = (DateTime) request.orderModel.TimeTakeOrder,
+                TimeDeliverOrder = (DateTime) request.orderModel.TimeDeliverOrder,
+                UpdateDateTime = CoreHelper.SystemTimeNow
+            };
+            return await _orderRepository.UpdateOrderRepositoryAsync(order);
+        }
+        public async Task<Guid> DeleteOrderServiceAsync(Guid id)
+        {
+            Order order = new Order
+            {
+                Id = id,
+                DeleteDateTime = CoreHelper.SystemTimeNow
+            };
+            return await _orderRepository.DeleteOrderRepositoryAsync(order);
+        }
+
+        public async Task<ICollection<Order>> GetByCustomerIdServiceAsync(Guid id)
+        {
+            return await _orderRepository.GetOrdersByCustomerIdRepositoryAsync(id);
+        }
+
+        public async Task<ICollection<Order>> GetByStoreIdServiceAsync(Guid id)
+        {
+            return await _orderRepository.GetOrdersByStoreIdRepositoryAsync(id);
+        }
         #region private method
         private Guid GetSidLogged()
         {
@@ -131,6 +150,7 @@ namespace TeamSolution.Service
             }
             return Guid.Parse(sid);
         }
+
         #endregion
     }
 }

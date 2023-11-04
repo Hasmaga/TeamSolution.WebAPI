@@ -36,21 +36,23 @@ namespace TeamSolution.Repository
             }
         }
 
-        public async Task<String> GetStatusNameByStatusIdRepositoryAsync(Guid statusId)
+        public async Task<String?> GetStatusNameByStatusIdRepositoryAsync(Guid statusId)
         {
             try
             {
-                _logger.LogInformation("(StatusRepository)FindStatusNameByIdAsync: " + statusId);
+                _logger.LogInformation($"GetStatusNameByStatusIdRepositoryAsync: {statusId}");
                 var status = await _context.Statuses.FirstOrDefaultAsync(x => x.Id == statusId);
                 if (status != null)
                 {
                     return status.StatusName;
                 }
-                return String.Empty;
+                else
+                {
+                    return null;
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError("(StatusRepository)Error find status: " + statusId + ex);
                 throw;
             }
         }

@@ -30,6 +30,44 @@ namespace TeamSolution.Repository
                 _logger.LogError("Error Create Order Detail At Repository: " + ex.ToString());
                 throw;
             }
+        }     
+
+        public async Task<OrderDetail?> GetOrderDetailByOrderDetailIdRepositoryAsync(Guid orderDetailId)
+        {
+            _logger.LogInformation("GetOrderDetailByOrderDetailIdRepositoryAsync" + orderDetailId);
+            try
+            {
+                var orderdetail = await _context.OrderDetails.FindAsync(orderDetailId);
+                if (orderdetail != null)
+                {
+                    return orderdetail;
+                }
+                else
+                {
+                    return null;
+                }
+            } catch (Exception ex)
+            {
+                _logger.LogInformation("GetOrderDetailByOrderDetailIdRepositoryAsync Error at: " + ex.ToString());
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateOrderDetailByOrderServiceIdRepositoryAsync(Guid orderDetailId, Guid newStoreServiceId)
+        {
+            _logger.LogInformation("UpdateOrderDetailByOrderServiceIdRepositoryAsync");
+            try
+            {
+                var orderDetail = await _context.OrderDetails.FindAsync(orderDetailId);
+                orderDetail.StoreServiceId = newStoreServiceId;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error Update Order Detail At Repository: " + ex.ToString());
+                throw;
+            }
         }
         public async Task<OrderDetail> GetOrderDetailByIdAsync(Guid orderDetailId)
         {

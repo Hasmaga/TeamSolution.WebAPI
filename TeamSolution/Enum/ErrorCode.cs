@@ -20,5 +20,9 @@
         public const string ORDER_NOT_FOUND = "ORDER_NOT_FOUND";
         public const string SHIPPERS_NOT_FOUND = "SHIPPERS_NOT_FOUND";
 
+        public const string NOT_FOUND = "NOT_FOUND";
+        public const string NOT_ALLOW = "NOT_ALLOW";
     }
+
+
 }
