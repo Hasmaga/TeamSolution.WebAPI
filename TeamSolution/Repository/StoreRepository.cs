@@ -137,5 +137,25 @@ namespace TeamSolution.Repository
             }
         }
 
+        public async Task<ICollection<Store>> GetFilterStoreByStoreNameRepositoryAsync(string storeName)
+        {
+            try
+            {   // if storeName is null or empty, return all store
+                _logger.LogInformation("GetFilterStoreByStoreNameRepositoryAsync: " + storeName);
+                if (string.IsNullOrEmpty(storeName))
+                {
+                    return await _context.Stores.ToListAsync();
+                }
+                else
+                {
+                    // return list store with storeName have character contain storeName or like storeName
+                    return await _context.Stores.Where(x => x.StoreName.ToLower().Contains(storeName.ToLower())).ToListAsync();                    
+                }                
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

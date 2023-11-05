@@ -52,5 +52,18 @@ namespace TeamSolution.Service
             store.DeleteDateTime = DateTime.Now;
             return _storeRepository.DeleteAsync(store);
         }
+
+        public async Task<ICollection<Store>> GetFilterStoreByStoreNameServiceAsync(string storeName)
+        {
+            try
+            {
+                var result = await _storeRepository.GetFilterStoreByStoreNameRepositoryAsync(storeName);                
+                return result.ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

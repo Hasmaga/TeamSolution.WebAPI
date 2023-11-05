@@ -18,8 +18,7 @@ namespace TeamSolution.Controllers
         {
             _storeService = storeService;
         }
-        [HttpGet("GetAll")]
-        [Authorize]
+        [HttpGet("GetAll")]        
         public async Task<IActionResult> GetAllStore()
         {
             try
@@ -39,8 +38,7 @@ namespace TeamSolution.Controllers
             }
         }
 
-        [HttpGet("GetById")]
-        [Authorize]
+        [HttpGet("GetById/{id}")]        
         public async Task<IActionResult> GetSigleStoreById(Guid id)
         {
             try
@@ -135,5 +133,19 @@ namespace TeamSolution.Controllers
             }
         }
 
+        // GetFilterStoreByStoreNameServiceAsync url = /storeapi/getfilterstore?storeName=abc or /storeapi/getfilterstore
+        [HttpGet("getfilterstore/{storeName}")]        
+        public async Task<IActionResult> GetFilterStoreByStoreNameServiceAsync(string storeName)
+        {
+            try
+            {
+                var result = await _storeService.GetFilterStoreByStoreNameServiceAsync(storeName);                   
+                return StatusCode(200, result);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }        
     }
 }

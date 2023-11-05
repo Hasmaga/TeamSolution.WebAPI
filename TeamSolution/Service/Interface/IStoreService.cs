@@ -10,5 +10,6 @@ namespace TeamSolution.Service.Interface
         Task<Guid> CreateStoreAsync(StoreModel store);
         Task<Guid> UpdateStoreAsync(UpdateStoreRequestModel updateStoreRequest);
         Task<Guid> DeleteStoreAsync(Guid id);
+        Task<ICollection<Store>> GetFilterStoreByStoreNameServiceAsync(string storeName);
     }
 }
