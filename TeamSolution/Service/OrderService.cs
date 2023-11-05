@@ -6,6 +6,7 @@ using TeamSolution.Enum;
 using TeamSolution.ViewModel.Order;
 using TeamSolution.ViewModel.Store;
 using TeamSolution.Helper;
+using System.Collections.Generic;
 
 namespace TeamSolution.Service
 {
@@ -140,6 +141,88 @@ namespace TeamSolution.Service
         {
             return await _orderRepository.GetOrdersByStoreIdRepositoryAsync(id);
         }
+        public async Task<ICollection<Order>?> GetByStoreIdAndStatusServiceAsync(Guid storeId, string orderState)
+        {
+            ICollection<Order>? list = null;
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+            if(userLogged == null)
+            {
+                throw new Exception(ErrorCode.NOT_AUTHORIZED);
+            }
+            var store = await _storeRepository.GetStoreByAccountIdRepositoryAsync(storeId);
+            if(store != null && store.Id == storeId)
+            {
+                var statusId = await _statusRepository.FindIdByStatusNameAsync(orderState);
+                list = await _orderRepository.GetOrdersByStoreIdAndStatusIdRepositoryAsync(storeId, statusId);
+            }
+              
+            return list;
+        }
+
+        // method for store manage orders
+        public async Task<Guid> UpdateOrderStateServiceAsync(Guid orderId, string newState)
+        {
+            //Kiểm người dùng hiện tại
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+            if (userLogged == null)
+            {
+                throw new Exception(ErrorCode.NOT_AUTHORIZED);
+            }
+            //Kiểm dữ liệu của order
+            var order = await GetOrderByIdServiceAsync(orderId);
+            var currentState = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(order.StatusOrderId);
+
+            //kiểm xem order có thuộc cửa hàng hay không
+            if(userLogged.StoreId != order.StoreId)
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+
+            bool isAprovel = false;
+            switch (currentState)
+            {
+                case StatusOrderEnumCode.WAITING_STORE_ACCEPT:
+                    if(newState == StatusOrderEnumCode.STORE_ACCEPT)
+                    {
+                        isAprovel = true;
+                    }
+                    break;
+                case StatusOrderEnumCode.SHIPPER_ARRIVED_STORE:
+                    if (newState == StatusOrderEnumCode.READY_TO_WASH_ORDER)
+                    {
+                        isAprovel = true;
+                    }
+                    break;
+                case StatusOrderEnumCode.READY_DELIVERY_ORDER:
+                    if (newState == StatusOrderEnumCode.ORDER_IN_PROGRESS)
+                    {
+                        isAprovel = true;
+                    }
+                    break;
+                case StatusOrderEnumCode.ORDER_IN_PROGRESS:
+                    if (newState == StatusOrderEnumCode.WASH_DONE)
+                    {
+                        isAprovel = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if(!isAprovel)
+            {
+                throw new Exception(ResponseCodeConstantsOrder.UPDATE_ORDER_FAILED);
+            }
+            var statusId = await _statusRepository.FindIdByStatusNameAsync(newState);
+            Order updateModel = new Order
+            {
+                Id = orderId,
+                StatusOrderId = statusId
+            };
+
+            return await _orderRepository.UpdateOrderStateRepositoryAsync(updateModel);
+
+        }
+
         #region private method
         private Guid GetSidLogged()
         {

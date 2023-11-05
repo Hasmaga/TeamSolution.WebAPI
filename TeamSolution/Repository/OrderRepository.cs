@@ -88,7 +88,12 @@ namespace TeamSolution.Repository
             try
             {
                 _logger.LogInformation("Get order with ID:" + id);
-                return await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
+                var entity = await _context.Orders.FirstOrDefaultAsync(x => x.Id == id);
+                if (entity == null)
+                {
+                    throw new Exception(ErrorCode.NOT_FOUND);
+                }
+                return entity;
             }
             catch (Exception)
             {
@@ -120,6 +125,24 @@ namespace TeamSolution.Repository
             {
                 _logger.LogInformation("Get order with Store ID:" + id);
                 var queryable = _context.Orders.Where(x => x.StoreId == id);
+                if (!includeIsDeleted)
+                {
+                    queryable = queryable.Where(o => o.DeleteDateTime == null);
+                }
+                return await queryable.ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<ICollection<Order>> GetOrdersByStoreIdAndStatusIdRepositoryAsync(Guid storeId, Guid statusId, bool includeIsDeleted)
+        {
+            try
+            {
+                _logger.LogInformation($"Get order with Store ID: {storeId} and Status ID: {statusId}");
+                var queryable = _context.Orders.Where(x => x.StoreId == storeId && x.StatusOrderId == statusId);
                 if (!includeIsDeleted)
                 {
                     queryable = queryable.Where(o => o.DeleteDateTime == null);
