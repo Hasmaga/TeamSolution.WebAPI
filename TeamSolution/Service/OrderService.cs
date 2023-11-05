@@ -182,7 +182,7 @@ namespace TeamSolution.Service
             switch (currentState)
             {
                 case StatusOrderEnumCode.WAITING_STORE_ACCEPT:
-                    if(newState == StatusOrderEnumCode.STORE_ACCEPT)
+                    if(newState == StatusOrderEnumCode.STORE_ACCEPT || newState == StatusOrderEnumCode.STORE_DECLINCE)
                     {
                         isAprovel = true;
                     }
