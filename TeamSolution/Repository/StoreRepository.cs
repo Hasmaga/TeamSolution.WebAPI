@@ -50,6 +50,22 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+        public async Task<Store> GetStoreByAccountIdRepositoryAsync(Guid AccountId)
+        {
+            try
+            {
+                var store = await _context.Stores.AsNoTracking().Where(s => s.StoreManagerId == AccountId).FirstOrDefaultAsync();
+                if(store == null)
+                {
+                    throw new Exception(ResponseCodeConstants.NOT_FOUND);
+                }
+                return store;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<Guid> CreateAsync(Store store, CancellationToken cancellationToken)
         {
             try

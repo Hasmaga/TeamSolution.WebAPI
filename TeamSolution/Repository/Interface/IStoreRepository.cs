@@ -7,6 +7,7 @@ namespace TeamSolution.Repository.Interface
     {
         Task<Store> GetStoreByIdRepositoryAsync(Guid id);
         Task<ICollection<Store>> GetAll(bool includeIsDeleted = false);
+        Task<Store> GetStoreByAccountIdRepositoryAsync(Guid AccountId);
         Task<Guid> CreateAsync(Store store, CancellationToken cancellationToken = default);
         Task<Guid> UpdateAsync(Store store, CancellationToken cancellationToken = default);
         Task<Guid> DeleteAsync(Store store, CancellationToken cancellationToken = default);

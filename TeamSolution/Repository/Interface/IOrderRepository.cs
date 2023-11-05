@@ -10,6 +10,7 @@ namespace TeamSolution.Repository.Interface
         Task<ICollection<Order>> GetAllOrdersRepositoryAsync(bool includeIsDeleted = false);
         Task<ICollection<Order>> GetOrdersByCustomerIdRepositoryAsync(Guid id, bool includeIsDeleted = false);
         Task<ICollection<Order>> GetOrdersByStoreIdRepositoryAsync(Guid id, bool includeIsDeleted = false);
+        Task<ICollection<Order>> GetOrdersByStoreIdAndStatusIdRepositoryAsync(Guid storeId, Guid statusId, bool includeIsDeleted = false);
         Task<Guid> UpdateOrderStateRepositoryAsync(Order order, CancellationToken cancellationToken = default);
         Task<Guid> UpdateOrderRepositoryAsync(Order order, CancellationToken cancellationToken = default);
         Task<Guid> DeleteOrderRepositoryAsync(Order order, CancellationToken cancellationToken = default);
