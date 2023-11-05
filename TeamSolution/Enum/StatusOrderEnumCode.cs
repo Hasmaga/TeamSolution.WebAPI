@@ -18,5 +18,6 @@
         public const string READY_TO_WASH_ORDER = "READY_TO_WASH_ORDER";
         public const string ORDER_DONE = "ORDER_DONE";
         public const string ORDER_REJECT = "ORDER_REJECT";
+        public const string ORDER_CANCEL = "ORDER_CANCEL";
     }
 }
