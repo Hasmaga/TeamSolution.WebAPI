@@ -195,5 +195,9 @@ namespace TeamSolution.Repository
             }
         }
 
+        public Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
