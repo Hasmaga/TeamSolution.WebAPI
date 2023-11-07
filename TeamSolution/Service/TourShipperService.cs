@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using AutoMapper;
+using System.Security.Claims;
 using TeamSolution.Enum;
 using TeamSolution.Helper;
 using TeamSolution.Model;
@@ -18,12 +19,13 @@ namespace TeamSolution.Service
         private readonly IOrderRepository _orderRepository;
         private readonly ILogger _logger;
         private readonly IHttpContextAccessor _http;
+        private readonly IMapper _mapper;
         public TourShipperService(ITourShipperRepository tourShipperRepository, 
             ILogger<TourShipperService> logger, 
             IHttpContextAccessor http, 
             IAccountRepository accountRepository,
             IStatusRepository statusRepository, 
-            IOrderRepository orderRepository)
+            IOrderRepository orderRepository, IMapper mapper)
         {
             _tourShipperRepository = tourShipperRepository;
             _logger = logger;
@@ -31,29 +33,31 @@ namespace TeamSolution.Service
             _accountRepository = accountRepository;
             _statusRepository = statusRepository;
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
         public async Task<ICollection<TourShipper>> GetAllToursServiceAsync()
         {
             return await _tourShipperRepository.GetAllToursRepositoryAsync();
         }
-
         public async Task<TourShipper?> GetTourByTourIdServiceAsync(Guid tourId)
         {
             return await _tourShipperRepository.GetTourByTourIdRepositoryAsync(tourId);
         }
-        public async Task<TourShipper?> GetTourByTourIdIncludeOrderServiceAsync(Guid tourId)
+        public async Task<ResponseTourShipperModel?> GetTourByTourIdIncludeOrderServiceAsync(Guid tourId)
         {
-            return await _tourShipperRepository.GetTourByTourIdIncludeOrderRepositoryAsync(tourId);
+            var entity = await _tourShipperRepository.GetTourByTourIdIncludeOrderRepositoryAsync(tourId);
+            ResponseTourShipperModel reponse = new ResponseTourShipperModel();
+            _mapper.Map(entity, reponse);
+            return reponse;
         }
-
         public async Task<bool> CreateTourServiceAsync(TourShipperModel tour)
         {
             _logger.LogInformation("CreateTourServiceAsync");
             try
             {
-                var statusReadyTakeId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_TAKE_ORDER);
-                var statusReadyDeliveryId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_DELIVERY_ORDER);
+                Guid statusReadyTakeId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_TAKE_ORDER);
+                Guid statusReadyDeliveryId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_DELIVERY_ORDER);
                 var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
                
                 //Tạm bỏ qua xác thực role
@@ -76,11 +80,11 @@ namespace TeamSolution.Service
                 }
 
                 bool flag = false;
-                if (tour.DeliverOrGet == "DELIVER") 
+                if (tour.DeliverOrGet == "GET") 
                 { 
                     flag = await IsListOrdersValid(tour.Orders,statusReadyTakeId);
                 }
-                if (tour.DeliverOrGet == "GET")
+                if (tour.DeliverOrGet == "DELIVER")
                 {
                     flag = await IsListOrdersValid(tour.Orders, statusReadyDeliveryId);
                 }
@@ -89,23 +93,35 @@ namespace TeamSolution.Service
                     throw new Exception(ErrorCode.NOT_FOUND);   
                 }
                 Guid wattingShipperAcceptId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_SHIPPER_ACCEPT);
+                TourShipper newTour = new TourShipper
+                {
+                    ShipperManagerId = userLogged.Id,
+                    ShipperId = (Guid)tour.ShipperId,
+                    DeliverOrGet = tour.DeliverOrGet,
+                    StatusId = statusId,
+                };
                 foreach (var orderId in tour.Orders)
                 {
+                    Guid? getOrderId = null, shipOrderId = null;
+                    if(tour.DeliverOrGet == "GET")
+                    {
+                        getOrderId = newTour.Id;
+                    }
+                    if (tour.DeliverOrGet == "DELIVER")
+                    {
+                        shipOrderId = newTour.Id;
+                    }
                     Order updateModel = new Order
                     {
                         Id = orderId,
                         StatusOrderId = wattingShipperAcceptId,
+                        TourGetOrderId = getOrderId,
+                        TourShipOrderId = shipOrderId,
                         UpdateDateTime = CoreHelper.SystemTimeNow
                     };
                     await _orderRepository.UpdateOrderStateRepositoryAsync(updateModel);
                 }
-                TourShipper newTour = new TourShipper
-                {
-                    ShipperManagerId = userLogged.Id,
-                    ShipperId = (Guid) tour.ShipperId,
-                    DeliverOrGet = tour.DeliverOrGet,
-                    StatusId = statusId,
-                };
+                
                 return await _tourShipperRepository.CreateTourRepositoryAsync(newTour);
             }
             catch(Exception ex)
@@ -113,10 +129,34 @@ namespace TeamSolution.Service
                 throw;
             }
         }
-
         public async Task<Guid> UpdateTourServiceAsync(UpdateTourShipperRequestModel tour)
         {
-            throw new NotImplementedException();
+            if( tour.TourShipperModel?.StatusName == null)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);   
+            }
+            var tourShipper = await _tourShipperRepository.GetTourByTourIdRepositoryAsync(tour.Id);
+            if (tourShipper == null)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);
+            }    
+            var tourStatusName = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(tourShipper.StatusId);
+            if (tourStatusName == null)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);
+            }
+            
+            if(!IsTourStatusValid(tourStatusName, tour.TourShipperModel.StatusName))
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+            TourShipper ts = new TourShipper
+            {
+                Id = tour.Id,
+                StatusId = await _statusRepository.FindIdByStatusNameAsync(tour.TourShipperModel.StatusName),
+                UpdateDateTime = CoreHelper.SystemTimeNow,
+            };
+            return await _tourShipperRepository.UpdateTourRepositoryAsync(ts);
         }
         public async Task<Guid> DeleteTourServiceAsync(Guid Id)
         {
@@ -127,6 +167,7 @@ namespace TeamSolution.Service
             };
             return await _tourShipperRepository.DeleteTourRepositoryAsync(tourShipper);
         }
+
         #region private method
         private Guid GetSidLogged()
         {

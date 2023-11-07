@@ -6,7 +6,7 @@ namespace TeamSolution.Service.Interface
     public interface ITourShipperService
     {
         Task<TourShipper?> GetTourByTourIdServiceAsync(Guid tourId);
-        Task<TourShipper?> GetTourByTourIdIncludeOrderServiceAsync(Guid tourId);
+        Task<ResponseTourShipperModel?> GetTourByTourIdIncludeOrderServiceAsync(Guid tourId);
         Task<ICollection<TourShipper>> GetAllToursServiceAsync();
 
         Task<bool> CreateTourServiceAsync(TourShipperModel tour);

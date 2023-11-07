@@ -42,15 +42,28 @@ namespace TeamSolution.Repository
             _logger.LogInformation($"Get Tour by TourId: {tourId}");
             try
             {
-                var Tour = await _context.TourShippers.Where(t => t.Id == tourId).Include(s => s.TourGetOrders).Include(s=> s.TourShipOrders).FirstOrDefaultAsync();
-                if (Tour != null)
+                var tour = await _context.TourShippers.Where(t => t.Id == tourId).Include(s => s.TourGetOrders).Include(s=> s.TourShipOrders).FirstOrDefaultAsync();
+                if (tour == null)
                 {
-                    return Tour;
+                    throw new Exception(ErrorCode.NOT_FOUND);
                 }
-                else
+
+                TourShipper ts = new TourShipper
                 {
-                    return null;
-                }
+                    Id = tour.Id,
+                    ShipperManagerId = tour.ShipperManagerId,
+                    ShipperId = tour.ShipperId,
+                    DeliverOrGet = tour.DeliverOrGet,
+                    StatusId = tour.StatusId,
+                    CreateDateTime = tour.CreateDateTime,
+                    UpdateDateTime = tour.UpdateDateTime,
+                    DeleteDateTime = tour.DeleteDateTime,
+                    TourShipOrders = tour.TourShipOrders,
+                    TourGetOrders = tour.TourGetOrders
+                    
+                };
+
+                return ts;
             }
             catch (Exception ex)
             {

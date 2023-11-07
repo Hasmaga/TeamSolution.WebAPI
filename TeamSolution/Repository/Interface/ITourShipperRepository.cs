@@ -10,5 +10,6 @@ namespace TeamSolution.Repository.Interface
         Task<bool> CreateTourRepositoryAsync(TourShipper tour);
         Task<Guid> UpdateTourRepositoryAsync(TourShipper tour, CancellationToken cancellationToken = default);
         Task<Guid> DeleteTourRepositoryAsync(TourShipper tour, CancellationToken cancellationToken = default);
+        Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum);
     }
 }

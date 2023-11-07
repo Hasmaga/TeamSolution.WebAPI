@@ -93,5 +93,9 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+        public async Task<List<Account>> GetAllAccountsWithRoleAsync(Guid roleId)
+        {
+            return await _context.Accounts.Where(x => x.RoleId == roleId).ToListAsync();
+        }
     }
 }
