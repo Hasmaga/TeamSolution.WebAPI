@@ -46,7 +46,7 @@ namespace TeamSolution.Service
                 _logger.LogInformation("CreateAdminAccAsync: " + acc.Email);
                 // Check conditions
                 var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
-                var Adminrole = await _roleRepository.FindIdByRoleNameAsync("Admin");
+                var Adminrole = await _roleRepository.FindIdByRoleNameAsync(ActorEnumCode.ADMIN);
                 if (
                     _http.HttpContext != null
                     && CheckTokenIsExpires(_http.HttpContext.Request.Headers["Authorization"].ToString()) == true
@@ -260,6 +260,24 @@ namespace TeamSolution.Service
             return true;           
         }
 
+        public async Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum)
+        {
+            roleEnum = roleEnum.ToUpper();
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+            if(userLogged == null)
+            {
+                throw new Exception(ErrorCode.USER_NOT_FOUND);
+            }
+            var userRole = await _roleRepository.GetRoleByIdAsync(userLogged.RoleId);
+            if(userRole == null)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);
+            }    
+            var list = await Authorization(userRole.RoleName,roleEnum);
+            return list;
+        }
+
+
         public async Task<string> GetRoleNameByHttpsClientServiceAsync()
         {
             _logger.LogInformation("GetRoleNameByHttpsClientServiceAsync");
@@ -282,6 +300,7 @@ namespace TeamSolution.Service
                 throw;
             }            
         }
+
 
         #region Private Methods
         private string CreatePasswordHash(string password, out byte[] passwordSalt)
@@ -360,6 +379,25 @@ namespace TeamSolution.Service
             var otpCode = new Random().Next(100000, 999999).ToString();
             return otpCode;
         }        
+        private async Task<List<Account>> Authorization(string userRole, string roleNameToFind)
+        {
+            switch(userRole)
+            {
+                case ActorEnumCode.ADMIN:
+                    var roleId1 = await _roleRepository.FindIdByRoleNameAsync(roleNameToFind);
+                    return await _accountRepository.GetAllAccountsWithRoleAsync(roleId1);
+                   
+                case ActorEnumCode.SHIPPER_MANAGER:
+                    if(roleNameToFind == ActorEnumCode.SHIPPER_MANAGER)
+                    {
+                        var roleId2 = await _roleRepository.FindIdByRoleNameAsync(roleNameToFind);
+                        return await _accountRepository.GetAllAccountsWithRoleAsync(roleId2);
+                    }
+                    throw new Exception(ErrorCode.NOT_ALLOW);
+                default:
+                    throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+        }
         #endregion
     }
 }

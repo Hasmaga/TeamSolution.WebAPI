@@ -175,6 +175,23 @@ namespace TeamSolution.Controllers
             }
         }
 
+        [HttpGet("GetUsersByRoleName")]
+        [Authorize]
+        public async Task<IActionResult> GetUsersByRoleName(string roleName)
+        {
+            try
+            {
+                var profile = await _accountService.GetAllAccountsWithRoleAsync(roleName);
+                if (profile != null)
+                {
+                    return StatusCode(200, profile);
+                }
+                else
+                {
+                    return StatusCode(500, ErrorCode.SERVER_ERROR);
+                }
+
+
         [HttpGet("getrolename")]
         [Authorize]
         public async Task<IActionResult> GetRoleNameByHttpsClient()

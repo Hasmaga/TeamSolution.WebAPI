@@ -40,6 +40,18 @@
         public const string DELETE_ORDER_FAILED = "DELETE_ORDER_FAILED";
     }
 
+    public class ResponseCodeConstantsTourShipper
+    {
+        public const string TOURSHIPPER = "TOURSHIPPER";
+        public const string CREATE_TOURSHIPPER_SUCCESSFULLY = "CREATE_TOURSHIPPER_SUCCESSFULLY";
+        public const string UPDATE_TOURSHIPPER_SUCCESSFULLY = "UPDATE_TOURSHIPPER_SUCCESSFULLY";
+        public const string DELETE_TOURSHIPPER_SUCCESSFULLY = "DELETE_TOURSHIPPER_SUCCESSFULLY";
+
+        public const string CREATE_TOURSHIPPER_FAILED = "CREATE_TOURSHIPPER_FAILED";
+        public const string UPDATE_TOURSHIPPER_FAILED = "UPDATE_TOURSHIPPER_FAILED";
+        public const string DELETE_TOURSHIPPER_FAILED = "DELETE_TOURSHIPPER_FAILED";
+    }
+
     public class ResponseCodeConstantsStoreService
     {
         public const string STORE_SERVICE = "STORE_SERVICE";

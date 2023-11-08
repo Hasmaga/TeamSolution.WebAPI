@@ -39,7 +39,6 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-
         public async Task<Order?> GetOrderByOrderIdRepositoryAsync(Guid orderId)
         {
             _logger.LogInformation($"Get Order by OrderId: {orderId}");
@@ -61,9 +60,6 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-
-        
-
         public async Task<ICollection<Order>> GetAllOrdersRepositoryAsync(bool includeIsDeleted)
         {
             try
@@ -82,7 +78,6 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
-
         public async Task<Order> GetOrderByIdRepositoryAsync(Guid id)
         {
             try

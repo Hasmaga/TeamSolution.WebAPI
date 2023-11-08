@@ -1,4 +1,5 @@
-﻿using TeamSolution.ViewModel.Account;
+﻿using TeamSolution.Model;
+using TeamSolution.ViewModel.Account;
 
 namespace TeamSolution.Service.Interface
 {
@@ -11,6 +12,7 @@ namespace TeamSolution.Service.Interface
         Task<bool> GetStatusAccountAsync();
         Task<GetProfileCustomerReqDto> GetProfileCustomerAsync();
         Task<bool> GenerateOtpAccountAndSendToEmail();
+        Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum);
         Task<string> GetRoleNameByHttpsClientServiceAsync();
     }
 }

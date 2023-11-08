@@ -160,8 +160,19 @@ namespace TeamSolution.Service
         }
 
         // method for store manage orders
-        public async Task<Guid> UpdateOrderStateServiceAsync(Guid orderId, string newState)
+        public async Task<Guid> UpdateOrderStatusForStoreServiceAsync(Guid orderId, string newState)
         {
+            List<string> validStates = new List<string> { 
+                StatusOrderEnumCode.STORE_ACCEPT,
+                StatusOrderEnumCode.STORE_DECLINCE,
+                StatusOrderEnumCode.READY_TO_WASH_ORDER,
+                StatusOrderEnumCode.ORDER_IN_PROGRESS,
+                StatusOrderEnumCode.WASH_DONE,
+            };
+            if(!validStates.Any(vs => vs.Equals(newState)))
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
             //Kiểm người dùng hiện tại
             var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
             if (userLogged == null)
@@ -171,44 +182,18 @@ namespace TeamSolution.Service
             //Kiểm dữ liệu của order
             var order = await GetOrderByIdServiceAsync(orderId);
             var currentState = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(order.StatusOrderId);
-
+            if(currentState == null)
+            {
+                throw new Exception(ResponseCodeConstantsOrder.UPDATE_ORDER_FAILED);
+            }
             //kiểm xem order có thuộc cửa hàng hay không
             if(userLogged.StoreId != order.StoreId)
             {
                 throw new Exception(ErrorCode.NOT_ALLOW);
             }
 
-            bool isAprovel = false;
-            switch (currentState)
-            {
-                case StatusOrderEnumCode.WAITING_STORE_ACCEPT:
-                    if(newState == StatusOrderEnumCode.STORE_ACCEPT)
-                    {
-                        isAprovel = true;
-                    }
-                    break;
-                case StatusOrderEnumCode.SHIPPER_ARRIVED_STORE:
-                    if (newState == StatusOrderEnumCode.READY_TO_WASH_ORDER)
-                    {
-                        isAprovel = true;
-                    }
-                    break;
-                case StatusOrderEnumCode.READY_DELIVERY_ORDER:
-                    if (newState == StatusOrderEnumCode.ORDER_IN_PROGRESS)
-                    {
-                        isAprovel = true;
-                    }
-                    break;
-                case StatusOrderEnumCode.ORDER_IN_PROGRESS:
-                    if (newState == StatusOrderEnumCode.WASH_DONE)
-                    {
-                        isAprovel = true;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if(!isAprovel)
+            string? status = CheckValidStatus(currentState, newState);
+            if(status == null)
             {
                 throw new Exception(ResponseCodeConstantsOrder.UPDATE_ORDER_FAILED);
             }
@@ -223,6 +208,93 @@ namespace TeamSolution.Service
 
         }
 
+        public async Task<Guid> UpdateOrderStatusForShipperServiceAsync(Guid orderId, string newState)
+        {
+            //shipper
+            List<string> validStates = new List<string> {
+                StatusOrderEnumCode.SHIPPER_ARRIVED_CUSTOMER,
+                StatusOrderEnumCode.SHIPPER_TAKE_ORDER,
+                StatusOrderEnumCode.DELIVER_TO_STORE,
+                StatusOrderEnumCode.SHIPPER_ARRIVED_STORE,
+            };
+            if (!validStates.Any(vs => vs.Equals(newState)))
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+            //Kiểm người dùng hiện tại
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+            if (userLogged == null)
+            {
+                throw new Exception(ErrorCode.NOT_AUTHORIZED);
+            }
+            //Kiểm dữ liệu của order
+            var order = await GetOrderByIdServiceAsync(orderId);
+            var currentState = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(order.StatusOrderId);
+
+            //kiểm xem order có thuộc shipper hay không (chưa làm)
+            /*if (userLogged.Id != order.)
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }*/
+
+            string? status = CheckValidStatus(currentState, newState);
+            if (status == null)
+            {
+                throw new Exception(ResponseCodeConstantsOrder.UPDATE_ORDER_FAILED);
+            }
+            var statusId = await _statusRepository.FindIdByStatusNameAsync(newState);
+            Order updateModel = new Order
+            {
+                Id = orderId,
+                StatusOrderId = statusId
+            };
+
+            return await _orderRepository.UpdateOrderStateRepositoryAsync(updateModel);
+
+        }
+        public async Task<Guid> UpdateOrderStatusForCustomerServiceAsync(Guid orderId, string newState)
+        {
+            //shipper
+            List<string> validStates = new List<string> {
+                StatusOrderEnumCode.ORDER_CANCEL,
+                StatusOrderEnumCode.ORDER_DONE,
+                StatusOrderEnumCode.ORDER_REJECT,
+            };
+            if (!validStates.Any(vs => vs.Equals(newState)))
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+            //Kiểm người dùng hiện tại
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+            if (userLogged == null)
+            {
+                throw new Exception(ErrorCode.NOT_AUTHORIZED);
+            }
+            //Kiểm dữ liệu của order
+            var order = await GetOrderByIdServiceAsync(orderId);
+            var currentState = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(order.StatusOrderId);
+
+            //kiểm xem order có thuộc customer hay không 
+            if (userLogged.Id != order.CustomerId)
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+
+            string? status = CheckValidStatus(currentState, newState);
+            if (status == null)
+            {
+                throw new Exception(ResponseCodeConstantsOrder.UPDATE_ORDER_FAILED);
+            }
+            var statusId = await _statusRepository.FindIdByStatusNameAsync(newState);
+            Order updateModel = new Order
+            {
+                Id = orderId,
+                StatusOrderId = statusId
+            };
+
+            return await _orderRepository.UpdateOrderStateRepositoryAsync(updateModel);
+
+        }
         #region private method
         private Guid GetSidLogged()
         {
@@ -232,6 +304,125 @@ namespace TeamSolution.Service
                 throw new Exception(ErrorCode.USER_NOT_FOUND);
             }
             return Guid.Parse(sid);
+        }
+
+        private string? CheckValidStatus(string currentStatus, string newStatus, string? tourDeliverOrGet = null)
+        {
+            switch(currentStatus)
+            {
+                case StatusOrderEnumCode.WAITING_STORE_ACCEPT:
+                    if (newStatus == StatusOrderEnumCode.STORE_ACCEPT)
+                    {
+                        return newStatus;
+                    }
+                    if (newStatus == StatusOrderEnumCode.STORE_DECLINCE)
+                    {
+                        return newStatus;
+                    }  
+                    break;
+                case StatusOrderEnumCode.STORE_ACCEPT:
+                    if (newStatus == StatusOrderEnumCode.READY_TAKE_ORDER)
+                    {
+                        return newStatus;
+                    }
+                    if (newStatus == StatusOrderEnumCode.ORDER_CANCEL)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.READY_TAKE_ORDER:
+                    if (newStatus == StatusOrderEnumCode.WAITING_SHIPPER_ACCEPT)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.WAITING_SHIPPER_ACCEPT:
+                    if(newStatus == StatusOrderEnumCode.SHIPPER_ON_THE_WAY)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.SHIPPER_ON_THE_WAY:
+                    if (newStatus == StatusOrderEnumCode.SHIPPER_ARRIVED_CUSTOMER)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.SHIPPER_ARRIVED_CUSTOMER:
+                    if(tourDeliverOrGet == null)
+                    {
+                        throw new Exception(ErrorCode.NOT_ALLOW);
+                    }
+                    if (newStatus == StatusOrderEnumCode.SHIPPER_TAKE_ORDER && tourDeliverOrGet == StatusShipperTourEnum.GET)
+                    {
+                        return newStatus;
+                    }
+                    if (newStatus == StatusOrderEnumCode.ORDER_DONE && tourDeliverOrGet == StatusShipperTourEnum.DELIVER)
+                    {
+                        return newStatus;
+                    }
+                    if (newStatus == StatusOrderEnumCode.ORDER_REJECT && tourDeliverOrGet == StatusShipperTourEnum.DELIVER)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.SHIPPER_TAKE_ORDER:
+                    if (newStatus == StatusOrderEnumCode.DELIVER_TO_STORE)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.DELIVER_TO_STORE:
+                    if (newStatus == StatusOrderEnumCode.SHIPPER_ARRIVED_STORE)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.SHIPPER_ARRIVED_STORE:
+                    if (newStatus == StatusOrderEnumCode.READY_TO_WASH_ORDER)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.READY_TO_WASH_ORDER:
+                    if (newStatus == StatusOrderEnumCode.ORDER_IN_PROGRESS)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.ORDER_IN_PROGRESS:
+                    if (newStatus == StatusOrderEnumCode.WASH_DONE)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.WASH_DONE:
+                    if (newStatus == StatusOrderEnumCode.READY_DELIVERY_ORDER)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.READY_DELIVERY_ORDER:
+                    if (newStatus == StatusOrderEnumCode.ORDER_DONE)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.ORDER_REJECT: 
+                    if (newStatus == StatusOrderEnumCode.DELIVER_TO_STORE)
+                    {
+                        return newStatus;
+                    }
+                    break;
+                case StatusOrderEnumCode.ORDER_DONE:
+                    throw new Exception(ErrorCode.NOT_ALLOW);
+                case StatusOrderEnumCode.STORE_DECLINCE:
+                    throw new Exception(ErrorCode.NOT_ALLOW);
+                case StatusOrderEnumCode.ORDER_CANCEL:
+                    throw new Exception(ErrorCode.NOT_ALLOW);
+
+            }
+            return null;
         }
 
         #endregion
