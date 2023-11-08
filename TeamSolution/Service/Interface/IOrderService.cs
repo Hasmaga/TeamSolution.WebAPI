@@ -17,5 +17,6 @@ namespace TeamSolution.Service.Interface
         Task<Guid> UpdateOrderStatusForCustomerServiceAsync(Guid orderId, string newState);
         Task<Guid> UpdateOrderServiceAsync(UpdateOrderRequestModel request);
         Task<Guid> DeleteOrderServiceAsync(Guid id);
+        Task<ICollection<StoreOrderViewDto>> GetListOrderByHttpsClientServiceAsync(string statusOrder);
     }
 }

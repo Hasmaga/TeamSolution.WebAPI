@@ -295,6 +295,73 @@ namespace TeamSolution.Service
             return await _orderRepository.UpdateOrderStateRepositoryAsync(updateModel);
 
         }
+
+        public async Task<ICollection<StoreOrderViewDto>> GetListOrderByHttpsClientServiceAsync(string statusOrder)
+        {
+            try
+            {
+                _logger.LogInformation("GetListOrder");
+                var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                if (userLogged == null)
+                {
+                    throw new Exception(ErrorCode.NOT_AUTHORIZED);
+                }
+                var store = await _storeRepository.GetStoreByAccountIdRepositoryAsync(userLogged.Id);
+                if (store == null)
+                {
+                    throw new Exception(ErrorCode.NOT_FOUND);
+                }
+                var listOrder = await _orderRepository.GetOrdersByStoreIdRepositoryAsync(store.Id);
+
+                
+                var listOrderFilter = new List<Order>();
+                if (statusOrder == "WAITING_STORE_ACCEPT")
+                {
+                    var statusWaitingForStore = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.WAITING_STORE_ACCEPT);
+                    listOrderFilter = listOrder.Where(o => o.StatusOrderId == statusWaitingForStore).ToList();
+                }
+
+                if (statusOrder == "READY_TO_WASH_ORDER")
+                {
+                    var statusAccepted = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.STORE_ACCEPT);
+                    listOrderFilter = listOrder.Where(o => o.StatusOrderId == statusAccepted).ToList();
+                }
+
+                if (statusOrder == "DONE")
+                {
+                    var stastusDone = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ORDER_DONE);
+                    listOrderFilter = listOrder.Where(o => o.StatusOrderId == stastusDone).ToList();
+                }
+
+                var result = new List<StoreOrderViewDto>();
+
+                foreach (var items in listOrderFilter)
+                {
+                    // Get name customer by orderId 
+                    var customer = await _accountRepository.GetUserByIdAsync(items.CustomerId);
+                    if (customer == null)
+                    {
+                        throw new Exception(ErrorCode.NOT_FOUND);
+                    }
+                    result.Add(new StoreOrderViewDto
+                    {
+                        Id = items.Id,
+                        OrderName = customer.FirstName + " " + customer.LastName,
+                        OrderAddress = items.OrderAddress,
+                        PhoneCustomer = items.PhoneCustomer,
+                        TimeTakeOrder = items.TimeTakeOrder,
+                        TimeDeliverOrder = items.TimeDeliverOrder,                        
+                    });
+                }
+                return result;
+                
+            } catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
         #region private method
         private Guid GetSidLogged()
         {

@@ -263,5 +263,19 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }
+
+        [HttpGet("GetListOrderByHttpsClientAsync/{statusOrder}")]
+        [Authorize]
+        public async Task<IActionResult> GetListOrderByHttpsClientAsync(string statusOrder)
+        {
+            try
+            {
+                var result = await _orderService.GetListOrderByHttpsClientServiceAsync(statusOrder);
+                return StatusCode(200, result);
+            } catch (Exception e)
+            {
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
     }
 }

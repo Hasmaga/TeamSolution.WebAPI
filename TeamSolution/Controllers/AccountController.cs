@@ -45,22 +45,22 @@ namespace TeamSolution.Controllers
         }
 
         // POST: userapi/createadminacc
-        [HttpPost("createadminacc"), Authorize]        
+        [HttpPost("createadminacc"), Authorize]
         public async Task<IActionResult> CreateAdminAccAsync(CreateNewCustomerReqDto acc)
         {
             try
             {
-                if(await _accountService.CreateAdminAccAsync(acc))
+                if (await _accountService.CreateAdminAccAsync(acc))
                 {
                     return StatusCode(200, SucessfulCode.CREATE_USER_SUCCESSFULLY);
                 } else
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
-                }                
+                }
             }
             catch (Exception e)
             {
-                if(e.Message == ErrorCode.NOT_AUTHORIZED)
+                if (e.Message == ErrorCode.NOT_AUTHORIZED)
                 {
                     return StatusCode(401, e.Message);
                 } else if (e.Message == ErrorCode.USER_IS_EXIST)
@@ -69,7 +69,7 @@ namespace TeamSolution.Controllers
                 } else
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
-                }                         
+                }
             }
         }
 
@@ -86,7 +86,7 @@ namespace TeamSolution.Controllers
                 } else
                 {
                     return StatusCode(500, ErrorCode.LOGIN_FAIL);
-                }                                
+                }
             }
             catch (Exception e)
             {
@@ -113,7 +113,7 @@ namespace TeamSolution.Controllers
                 } else
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
-                }                
+                }
             }
             catch (Exception e)
             {
@@ -129,7 +129,7 @@ namespace TeamSolution.Controllers
                 } else
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
-                }                
+                }
             }
         }
 
@@ -145,14 +145,14 @@ namespace TeamSolution.Controllers
                 } else
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
-                }                
+                }
             }
             catch (Exception e)
             {
                 return StatusCode(500, e.Message);
             }
         }
-        
+
         [HttpGet("GetProfile")]
         [Authorize]
         public async Task<IActionResult> GetProfileUser()
@@ -189,8 +189,12 @@ namespace TeamSolution.Controllers
                 else
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
-                }
-
+                }                
+            } catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
 
         [HttpGet("getrolename")]
         [Authorize]
