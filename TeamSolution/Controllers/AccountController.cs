@@ -174,6 +174,7 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+
         [HttpGet("GetUsersByRoleName")]
         [Authorize]
         public async Task<IActionResult> GetUsersByRoleName(string roleName)
@@ -189,6 +190,15 @@ namespace TeamSolution.Controllers
                 {
                     return StatusCode(500, ErrorCode.SERVER_ERROR);
                 }
+
+
+        [HttpGet("getrolename")]
+        [Authorize]
+        public async Task<IActionResult> GetRoleNameByHttpsClient()
+        {
+            try
+            {
+                return StatusCode(200, await _accountService.GetRoleNameByHttpsClientServiceAsync());
             }
             catch (Exception e)
             {

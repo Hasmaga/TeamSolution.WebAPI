@@ -13,5 +13,6 @@ namespace TeamSolution.Service.Interface
         Task<GetProfileCustomerReqDto> GetProfileCustomerAsync();
         Task<bool> GenerateOtpAccountAndSendToEmail();
         Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum);
+        Task<string> GetRoleNameByHttpsClientServiceAsync();
     }
 }

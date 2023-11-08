@@ -259,6 +259,7 @@ namespace TeamSolution.Service
             await _emailService.SendEmail(subject, body, user.Email);
             return true;           
         }
+
         public async Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum)
         {
             roleEnum = roleEnum.ToUpper();
@@ -275,6 +276,32 @@ namespace TeamSolution.Service
             var list = await Authorization(userRole.RoleName,roleEnum);
             return list;
         }
+
+
+        public async Task<string> GetRoleNameByHttpsClientServiceAsync()
+        {
+            _logger.LogInformation("GetRoleNameByHttpsClientServiceAsync");
+            try
+            {
+                var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                if (user == null)
+                {
+                    throw new Exception(ErrorCode.USER_NOT_FOUND);
+                }
+                var role = await _roleRepository.GetRoleByIdAsync(user.RoleId);
+                if (role == null)
+                {
+                    throw new Exception(ErrorCode.ROLE_NOT_FOUND);
+                }
+                return role.RoleName;
+            } 
+            catch (Exception)
+            {
+                throw;
+            }            
+        }
+
+
         #region Private Methods
         private string CreatePasswordHash(string password, out byte[] passwordSalt)
         {

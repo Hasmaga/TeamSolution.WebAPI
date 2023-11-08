@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TeamSolution.ViewModel.Store;
 using TeamSolution.Enum;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TeamSolution.Repository
 {
@@ -108,7 +109,7 @@ namespace TeamSolution.Repository
                 {
                     entity.StoreDescription = store.StoreDescription;
                 }
-                if (!string.IsNullOrEmpty(entity.StoreImage))
+                if (entity.StoreImage != null)
                 {
                     entity.StoreImage = store.StoreImage;
                 }

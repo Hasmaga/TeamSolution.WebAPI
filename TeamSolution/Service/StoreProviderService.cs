@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using TeamSolution.Enum;
 using TeamSolution.Model;
 using TeamSolution.Repository.Interface;
 using TeamSolution.Service.Interface;
 using TeamSolution.ViewModel.Store;
+using TeamSolution.ViewModel.StoreService;
 
 namespace TeamSolution.Service
 {
@@ -10,11 +12,15 @@ namespace TeamSolution.Service
     {
         private readonly IStoreRepository _storeRepository;
         private IMapper _mapper;
+        private readonly ILogger _logger;
+        private readonly IStoreServiceRepository _storeServiceRepository;
 
-        public StoreProviderService(IStoreRepository storeRepository,IMapper mapper)
+        public StoreProviderService(IStoreRepository storeRepository, IMapper mapper, ILogger<StoreProviderService> logger, IStoreServiceRepository storeServiceRepository)
         {
             _storeRepository = storeRepository;
             _mapper = mapper;
+            _logger = logger;
+            _storeServiceRepository = storeServiceRepository;
         }
 
         public Task<Store> GetStoreById(Guid id)
@@ -59,6 +65,52 @@ namespace TeamSolution.Service
             {
                 var result = await _storeRepository.GetFilterStoreByStoreNameRepositoryAsync(storeName);                
                 return result.ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<GetStoreAndStoreServiceReqDto> GetStoreInformationAndStoreServiceByStoreIdServiceAsync(Guid id)
+        {
+            _logger.LogInformation("Get store information and store service by store id");
+            try
+            {
+                var result = new GetStoreAndStoreServiceReqDto();
+                var storeService = new List<GetStoreServiceReqDto>();
+                var store = await _storeRepository.GetStoreByIdRepositoryAsync(id);
+                if (store == null)
+                {
+                    throw new Exception(ResponseCodeConstantsStore.STORE_NOT_FOUND);
+                }
+                var storeServices = await _storeServiceRepository.GetStoreServiceByStoreIdRepositoryAsync(id);
+                if (storeService == null)
+                {
+                    throw new Exception(ResponseCodeConstantsStoreService.STORE_SERVICE_NOT_FOUND);
+                }
+                
+                result.Id = store.Id;
+                result.StoreName = store.StoreName;
+                result.Address = store.Address;
+                result.StoreRating = store.StoreRating;
+                result.StoreDescription = store.StoreDescription;
+                result.StoreImage = store.StoreImage;
+                result.OperationTime = store.OperationTime;
+                result.Phone = store.Phone;
+                foreach (var item in storeServices)
+                {
+                    storeService.Add(new GetStoreServiceReqDto
+                    {
+                        Id = item.Id,
+                        ServiceDescription = item.ServiceDescription,
+                        ServicePrice = item.ServicePrice,
+                        ServiceDuration = item.ServiceDuration,
+                        ServiceType = item.ServiceType
+                    });
+                }
+                result.StoreServices = storeService;
+                return result;                
             }
             catch (Exception)
             {
