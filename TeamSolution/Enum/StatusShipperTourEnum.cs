@@ -5,5 +5,7 @@
         public const string WAITING_FOR_ACCEPT = "WAITING_FOR_ACCEPT";
         public const string ON_PROCESS = "ON_PROCESS";
         public const string DONE = "DONE";
+        public const string DELIVER = "DELIVER";
+        public const string GET = "GET";
     }
 }

@@ -146,7 +146,7 @@ namespace TeamSolution.Service
                 throw new Exception(ErrorCode.NOT_FOUND);   
             }
             // lấy thông tin của tour lên database
-            var tourShipper = await _tourShipperRepository.GetTourByTourIdRepositoryAsync(tour.Id);
+            var tourShipper = await _tourShipperRepository.GetTourByTourIdIncludeOrderRepositoryAsync(tour.Id);
             if (tourShipper == null)
             {
                 throw new Exception(ErrorCode.NOT_FOUND);
@@ -172,6 +172,22 @@ namespace TeamSolution.Service
             if(! await IsTourStatusValid(tourStatusName, tour.TourShipperModel.StatusName))
             {
                 throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+            List<Order> orders = new List<Order>();
+            if(tourShipper.DeliverOrGet == StatusShipperTourEnum.DELIVER && tourShipper.TourShipOrders != null)
+            {
+                orders = tourShipper.TourShipOrders.ToList();
+            }
+            if (tourShipper.DeliverOrGet == StatusShipperTourEnum.GET && tourShipper.TourGetOrders != null)
+            {
+                orders = tourShipper.TourGetOrders.ToList();
+            }
+            var onTheWayStatusId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.SHIPPER_ON_THE_WAY);
+            foreach (var order in orders)
+            {
+                order.StatusOrderId = onTheWayStatusId;
+                order.UpdateDateTime = CoreHelper.SystemTimeNow;
+                await _orderRepository.UpdateOrderStateRepositoryAsync(order);
             }
             TourShipper ts = new TourShipper
             {

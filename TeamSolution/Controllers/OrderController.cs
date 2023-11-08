@@ -168,7 +168,57 @@ namespace TeamSolution.Controllers
         {
             try
             {
-                if (await _orderService.UpdateOrderStateServiceAsync(orderId, orderStatus) != Guid.Empty)
+                if (await _orderService.UpdateOrderStatusForStoreServiceAsync(orderId, orderStatus) != Guid.Empty)
+                {
+                    return StatusCode(200, ResponseCodeConstantsOrder.UPDATE_ORDER_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsOrder.ORDER + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == ResponseCodeConstants.IS_DELETED)
+                {
+                    // Undefine status code
+                    return StatusCode(500, ResponseCodeConstants.IS_DELETED);
+                }
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+        [HttpPut("UpdateOrderStatusForShipper")]
+        [Authorize]
+        public async Task<IActionResult> UpdateOrderStatusForShipper(Guid orderId, string orderStatus)
+        {
+            try
+            {
+                if (await _orderService.UpdateOrderStatusForShipperServiceAsync(orderId, orderStatus) != Guid.Empty)
+                {
+                    return StatusCode(200, ResponseCodeConstantsOrder.UPDATE_ORDER_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsOrder.ORDER + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == ResponseCodeConstants.IS_DELETED)
+                {
+                    // Undefine status code
+                    return StatusCode(500, ResponseCodeConstants.IS_DELETED);
+                }
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
+        [HttpPut("UpdateOrderStatusForCustomer")]
+        [Authorize]
+        public async Task<IActionResult> UpdateOrderStatusForCustomer(Guid orderId, string orderStatus)
+        {
+            try
+            {
+                if (await _orderService.UpdateOrderStatusForCustomerServiceAsync(orderId, orderStatus) != Guid.Empty)
                 {
                     return StatusCode(200, ResponseCodeConstantsOrder.UPDATE_ORDER_SUCCESSFULLY);
                 }
