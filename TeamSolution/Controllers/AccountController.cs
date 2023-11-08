@@ -174,5 +174,19 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, e.Message);
             }
         }
+
+        [HttpGet("getrolename")]
+        [Authorize]
+        public async Task<IActionResult> GetRoleNameByHttpsClient()
+        {
+            try
+            {
+                return StatusCode(200, await _accountService.GetRoleNameByHttpsClientServiceAsync());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
     }
 }

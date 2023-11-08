@@ -260,6 +260,29 @@ namespace TeamSolution.Service
             return true;           
         }
 
+        public async Task<string> GetRoleNameByHttpsClientServiceAsync()
+        {
+            _logger.LogInformation("GetRoleNameByHttpsClientServiceAsync");
+            try
+            {
+                var user = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                if (user == null)
+                {
+                    throw new Exception(ErrorCode.USER_NOT_FOUND);
+                }
+                var role = await _roleRepository.GetRoleByIdAsync(user.RoleId);
+                if (role == null)
+                {
+                    throw new Exception(ErrorCode.ROLE_NOT_FOUND);
+                }
+                return role.RoleName;
+            } 
+            catch (Exception)
+            {
+                throw;
+            }            
+        }
+
         #region Private Methods
         private string CreatePasswordHash(string password, out byte[] passwordSalt)
         {

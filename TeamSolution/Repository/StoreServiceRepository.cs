@@ -34,5 +34,18 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+
+        public async Task<List<StoreService>> GetStoreServiceByStoreIdRepositoryAsync(Guid id)
+        {
+            try
+            {
+                var query = await _context.StoreServices.Where(x => x.StoreId == id).ToListAsync();
+                return query;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }       
     }
 }

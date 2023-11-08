@@ -146,6 +146,30 @@ namespace TeamSolution.Controllers
             {
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
-        }        
+        }
+
+        [HttpGet("getstoreinformationandstoreservice/{Id}")]
+        public async Task<IActionResult> GetStoreInformationAndStoreServiceByStoreIdAsync(Guid Id)
+        {
+            try
+            {
+                var result = await _storeService.GetStoreInformationAndStoreServiceByStoreIdServiceAsync(Id);
+                return StatusCode(200, result);                
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == ResponseCodeConstantsStore.STORE_NOT_FOUND)
+                {
+                    // Undefine status code
+                    return StatusCode(404, ResponseCodeConstantsStore.STORE_NOT_FOUND);
+                }
+                if (ex.Message == ResponseCodeConstantsStoreService.STORE_SERVICE_NOT_FOUND)
+                {
+                    // Undefine status code
+                    return StatusCode(404, ResponseCodeConstantsStoreService.STORE_SERVICE_NOT_FOUND);
+                }
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
     }
 }

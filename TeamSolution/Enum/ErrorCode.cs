@@ -18,6 +18,7 @@
         public const string CREATE_ORDER_FAIL = "CREATE_ORDER_FAIL";
         public const string NOT_FOUND = "NOT_FOUND";
         public const string NOT_ALLOW = "NOT_ALLOW";
+        public const string ROLE_NOT_FOUND = "ROLE_NOT_FOUND";
     }
 
 
