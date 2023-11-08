@@ -156,11 +156,11 @@ namespace TeamSolution.Repository
                     throw new Exception(ResponseCodeConstants.IS_DELETED);
                 }
 
-                if(tour.StatusId != CoreHelper.DefaultGuid)
+                if(tour.StatusId == CoreHelper.DefaultGuid)
                 {
-                    entity.StatusId = tour.StatusId;
+                    throw new Exception(ResponseCodeConstants.NOT_FOUND);
                 }
-
+                entity.StatusId = tour.StatusId;
                 entity.UpdateDateTime = tour.UpdateDateTime;
                 await _context.SaveChangesAsync();
                 return entity.Id;
@@ -195,9 +195,6 @@ namespace TeamSolution.Repository
             }
         }
 
-        public Task<List<Account>> GetAllAccountsWithRoleAsync(string roleEnum)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

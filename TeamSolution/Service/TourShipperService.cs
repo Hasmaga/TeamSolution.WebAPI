@@ -17,6 +17,7 @@ namespace TeamSolution.Service
         private readonly IAccountRepository _accountRepository;
         private readonly IStatusRepository _statusRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IRoleRepository _roleRepository;
         private readonly ILogger _logger;
         private readonly IHttpContextAccessor _http;
         private readonly IMapper _mapper;
@@ -25,7 +26,7 @@ namespace TeamSolution.Service
             IHttpContextAccessor http, 
             IAccountRepository accountRepository,
             IStatusRepository statusRepository, 
-            IOrderRepository orderRepository, IMapper mapper)
+            IOrderRepository orderRepository, IMapper mapper, IRoleRepository roleRepository)
         {
             _tourShipperRepository = tourShipperRepository;
             _logger = logger;
@@ -33,6 +34,7 @@ namespace TeamSolution.Service
             _accountRepository = accountRepository;
             _statusRepository = statusRepository;
             _orderRepository = orderRepository;
+            _roleRepository= roleRepository;
             _mapper = mapper;
         }
 
@@ -59,8 +61,13 @@ namespace TeamSolution.Service
                 Guid statusReadyTakeId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_TAKE_ORDER);
                 Guid statusReadyDeliveryId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_DELIVERY_ORDER);
                 var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
-               
-                //Tạm bỏ qua xác thực role
+
+                //lấy rolename của user 
+                var roleName = await _roleRepository.GetRoleByIdAsync(userLogged.RoleId);
+                if(roleName.RoleName != ActorEnumCode.SHIPPER_MANAGER)
+                {
+                    throw new Exception(ErrorCode.NOT_ALLOW);
+                }
 
                 //Validate tam thoi
                 if(tour.ShipperId == null) {
@@ -129,24 +136,118 @@ namespace TeamSolution.Service
                 throw;
             }
         }
-        public async Task<Guid> UpdateTourServiceAsync(UpdateTourShipperRequestModel tour)
+        public async Task<Guid> ChangeTourStatusAcceptServiceAsync(UpdateTourShipperRequestModel tour)
         {
-            if( tour.TourShipperModel?.StatusName == null)
+            
+
+            // kiểm tra status được cập nhật đúng là Onprocess ko
+            if ( tour.TourShipperModel?.StatusName == StatusShipperTourEnum.ON_PROCESS)
             {
                 throw new Exception(ErrorCode.NOT_FOUND);   
             }
+            // lấy thông tin của tour lên database
             var tourShipper = await _tourShipperRepository.GetTourByTourIdRepositoryAsync(tour.Id);
             if (tourShipper == null)
             {
                 throw new Exception(ErrorCode.NOT_FOUND);
-            }    
+            }
+            //xác thực user
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+
+            //lấy rolename của user 
+            var roleName = await _roleRepository.GetRoleByIdAsync(userLogged.RoleId);
+            if (roleName.RoleName != ActorEnumCode.SHIPPER || userLogged.Id != tourShipper.ShipperId)
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+
+
+            //lấy status name hiện tại của tour
             var tourStatusName = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(tourShipper.StatusId);
             if (tourStatusName == null)
             {
                 throw new Exception(ErrorCode.NOT_FOUND);
             }
+            //dùng hàm phụ trợ kiểm tra tính đúng sai của status mới
+            if(! await IsTourStatusValid(tourStatusName, tour.TourShipperModel.StatusName))
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+            TourShipper ts = new TourShipper
+            {
+                Id = tour.Id,
+                StatusId = await _statusRepository.FindIdByStatusNameAsync(tour.TourShipperModel.StatusName),
+                UpdateDateTime = CoreHelper.SystemTimeNow,
+            };
+            return await _tourShipperRepository.UpdateTourRepositoryAsync(ts);
+        }
+        public async Task<Guid> ChangeTourStatusDoneServiceAsync(UpdateTourShipperRequestModel tour)
+        {
             
-            if(!IsTourStatusValid(tourStatusName, tour.TourShipperModel.StatusName))
+            // kiểm tra status được cập nhật đúng là Done ko
+            if (tour.TourShipperModel?.StatusName == StatusShipperTourEnum.DONE)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);
+            }
+
+            // lấy thông tin của tour lên database
+            var tourShipper = await _tourShipperRepository.GetTourByTourIdIncludeOrderRepositoryAsync(tour.Id);
+            if (tourShipper == null)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);
+            }
+
+            //xác thực user
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+
+            //lấy rolename của user 
+            var roleName = await _roleRepository.GetRoleByIdAsync(userLogged.RoleId);
+            if (roleName.RoleName != ActorEnumCode.SHIPPER || userLogged.Id != tourShipper.ShipperId)
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+
+            //lấy status name hiện tại của tour
+            var tourStatusName = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(tourShipper.StatusId);
+            if (tourStatusName == null)
+            {
+                throw new Exception(ErrorCode.NOT_FOUND);
+            }
+            //dùng hàm phụ trợ kiểm tra tính đúng sai của status mới
+            if (!await IsTourStatusValid(tourStatusName, tour.TourShipperModel.StatusName))
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
+            // Lấy status có điều kiện tiên quyết (Order done) hoặc ready to wash order
+            var orderStatusDone = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.ORDER_DONE);
+            var orderStatusReadyWash = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnumCode.READY_TO_WASH_ORDER);
+            bool canDone = true;
+            //nế trạng thái tour là đưa hàng thì lấy từng order status trong tour đưa đem đi so sánh với status kết thúc tour đưa
+            if(tourShipper.DeliverOrGet == "DELIVER")
+            {
+                foreach (var order in tourShipper.TourShipOrders)
+                {
+                    if (order.StatusOrderId != orderStatusDone)
+                    {
+                        canDone = false;
+                        break;
+                    }
+                }
+            }
+            //Giống đoạn code trên nhưng là tourr lấy hàng
+            if (tourShipper.DeliverOrGet == "GET")
+            {
+                foreach(var order in tourShipper.TourGetOrders)
+                {
+                    if (order.StatusOrderId != orderStatusReadyWash)
+                    {
+                        canDone= false;
+                        break;
+                    }
+                }
+            }
+
+            if (!canDone)
             {
                 throw new Exception(ErrorCode.NOT_ALLOW);
             }
@@ -160,6 +261,15 @@ namespace TeamSolution.Service
         }
         public async Task<Guid> DeleteTourServiceAsync(Guid Id)
         {
+            //xác thực user
+            var userLogged = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+
+            //lấy rolename của user 
+            var roleName = await _roleRepository.GetRoleByIdAsync(userLogged.RoleId);
+            if (roleName.RoleName != ActorEnumCode.SHIPPER_MANAGER)
+            {
+                throw new Exception(ErrorCode.NOT_ALLOW);
+            }
             TourShipper tourShipper = new TourShipper
             {
                 Id = Id,
@@ -180,7 +290,7 @@ namespace TeamSolution.Service
         }
 
         
-        private bool IsTourStatusValid(string currentStatus, string newStatus)
+        private async Task<bool> IsTourStatusValid(string currentStatus, string newStatus)
         {
             switch (currentStatus)
             {
@@ -188,17 +298,17 @@ namespace TeamSolution.Service
                 case StatusShipperTourEnum.WAITING_FOR_ACCEPT:
                     if (newStatus == StatusShipperTourEnum.ON_PROCESS) 
                     {
-                        return true;
+                        return await Task.FromResult(true);
                     }
                     break;
                 case StatusShipperTourEnum.ON_PROCESS:
                     if (newStatus == StatusShipperTourEnum.DONE) 
                     {
-                        return true;
+                        return await Task.FromResult(true);
                     }
                     break;
             }
-            return false;
+            return await Task.FromResult(false);
         }
         private async Task<bool> IsListOrdersValid(List<Guid> orders, Guid validStatus)
         {

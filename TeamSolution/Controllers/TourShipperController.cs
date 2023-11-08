@@ -146,13 +146,13 @@ namespace TeamSolution.Controllers
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
         }*/
-        /*[HttpPut("UpdateTourShipperStatusForStore")]
+        [HttpPut("ChangeTourStatusAcceptForShipper")]
         [Authorize]
-        public async Task<IActionResult> UpdatetourShipperStatusForStore(Guid tourShipperId, string tourShipperStatus)
+        public async Task<IActionResult> ChangeTourStatusAcceptForShipper(UpdateTourShipperRequestModel model)
         {
             try
             {
-                if (await _tourShipperService.UpdateTourShipperStateServiceAsync(tourShipperId, tourShipperStatus) != Guid.Empty)
+                if (await _tourShipperService.ChangeTourStatusAcceptServiceAsync(model) != Guid.Empty)
                 {
                     return StatusCode(200, ResponseCodeConstantsTourShipper.UPDATE_TOURSHIPPER_SUCCESSFULLY);
                 }
@@ -170,7 +170,32 @@ namespace TeamSolution.Controllers
                 }
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }
-        }*/
+        }
+        [HttpPut("ChangeTourStatusDoneForShipper")]
+        [Authorize]
+        public async Task<IActionResult> ChangeTourStatusDoneForShipper(UpdateTourShipperRequestModel model)
+        {
+            try
+            {
+                if (await _tourShipperService.ChangeTourStatusDoneServiceAsync(model) != Guid.Empty)
+                {
+                    return StatusCode(200, ResponseCodeConstantsTourShipper.UPDATE_TOURSHIPPER_SUCCESSFULLY);
+                }
+                else
+                {
+                    return StatusCode(404, ResponseCodeConstantsTourShipper.TOURSHIPPER + "_" + ResponseCodeConstants.NOT_FOUND);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == ResponseCodeConstants.IS_DELETED)
+                {
+                    // Undefine status code
+                    return StatusCode(500, ResponseCodeConstants.IS_DELETED);
+                }
+                return StatusCode(500, ErrorCode.SERVER_ERROR);
+            }
+        }
         [HttpDelete("Delete")]
         [Authorize]
         public async Task<IActionResult> DeletetourShipper(Guid id)

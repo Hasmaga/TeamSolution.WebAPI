@@ -10,7 +10,8 @@ namespace TeamSolution.Service.Interface
         Task<ICollection<TourShipper>> GetAllToursServiceAsync();
 
         Task<bool> CreateTourServiceAsync(TourShipperModel tour);
-        Task<Guid> UpdateTourServiceAsync(UpdateTourShipperRequestModel tour);
+        Task<Guid> ChangeTourStatusAcceptServiceAsync(UpdateTourShipperRequestModel tour);
+        Task<Guid> ChangeTourStatusDoneServiceAsync(UpdateTourShipperRequestModel tour);
         Task<Guid> DeleteTourServiceAsync(Guid tourId);
     }
 }
