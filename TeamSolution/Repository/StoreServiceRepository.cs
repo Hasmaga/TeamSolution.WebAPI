@@ -47,5 +47,19 @@ namespace TeamSolution.Repository
                 throw;
             }
         }       
+
+        public async Task<bool> CreateStoreServiceRepository(StoreService storeService)
+        {
+            try
+            {
+                await _context.StoreServices.AddAsync(storeService);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }           
     }
 }

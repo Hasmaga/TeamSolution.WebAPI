@@ -6,5 +6,6 @@ namespace TeamSolution.Repository.Interface
     {
         Task<StoreService> GetStoreServiceByIdRepositoryAsync(Guid id);
         Task<List<StoreService>> GetStoreServiceByStoreIdRepositoryAsync(Guid id);
+        Task<bool> CreateStoreServiceRepository(StoreService storeService);
     }
 }

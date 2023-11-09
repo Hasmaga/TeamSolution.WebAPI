@@ -5,6 +5,7 @@ using TeamSolution.Enum;
 using TeamSolution.Repository;
 using static System.Net.WebRequestMethods;
 using System.Security.Claims;
+using TeamSolution.ViewModel.OrderDetail;
 
 namespace TeamSolution.Service
 {
@@ -17,7 +18,8 @@ namespace TeamSolution.Service
         private readonly IAccountRepository _accountRepository;
         private readonly IStoreServiceRepository _storeServiceRepository;
         private readonly IOrderRepository _orderRepository;
-        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IStatusRepository statusRepository, ILogger<OrderDetailService> logger, IHttpContextAccessor http, IAccountRepository accountRepository, IStoreServiceRepository storeServiceRepository, IOrderRepository orderRepository)
+        private readonly IStoreRepository _storeRepository;
+        public OrderDetailService(IOrderDetailRepository orderDetailRepository, IStatusRepository statusRepository, ILogger<OrderDetailService> logger, IHttpContextAccessor http, IAccountRepository accountRepository, IStoreServiceRepository storeServiceRepository, IOrderRepository orderRepository, IStoreRepository storeRepository)
         {
             _orderDetailRepository = orderDetailRepository;
             _statusRepository = statusRepository;
@@ -26,6 +28,7 @@ namespace TeamSolution.Service
             _accountRepository = accountRepository;
             _storeServiceRepository = storeServiceRepository;
             _orderRepository = orderRepository;
+            _storeRepository = storeRepository;
         }
 
         public Task<bool> CreateOrderDetailServiceAsync(OrderDetail orderDetail)
@@ -89,41 +92,46 @@ namespace TeamSolution.Service
             else
             {
                 return false;
+            }        
+        }
+
+        public async Task<ICollection<GetOrderDetailByOrderIdReqDto>> GetOrderDetailByOrderIdServiceAsync(Guid orderId)
+        {
+            _logger.LogInformation("GetOrderDetailByOrderIdServiceAsync: " + orderId);
+            try
+            {
+                var userLoggin = await _accountRepository.GetUserByIdAsync(GetSidLogged());
+                var order = await _orderRepository.GetOrderByOrderIdRepositoryAsync(orderId);
+                var store = await _storeRepository.GetStoreByAccountIdRepositoryAsync(userLoggin.Id);
+                if (userLoggin == null)
+                {
+                    throw new Exception(ErrorCode.NOT_AUTHORIZED);
+                }
+                if (order == null)
+                {
+                    throw new Exception(ErrorCode.NOT_FOUND);
+                }                
+                var orderDetails = await _orderDetailRepository.GetListOrderDetailByOrderIdRepositoryAsync(orderId);
+                // Convert OrderDetail to GetOrderDetailByOrderIdReqDto
+                var result = new List<GetOrderDetailByOrderIdReqDto>();
+                foreach (var item in orderDetails)
+                { 
+                    var storeService = await _storeServiceRepository.GetStoreServiceByIdRepositoryAsync(item.StoreServiceId);
+                    result.Add(new GetOrderDetailByOrderIdReqDto
+                    {
+                        Id = item.Id,
+                        StoreServiceType = storeService.ServiceType,
+                        Weight = item.Weight,
+                    });
+                }
+                return result;
             }
-
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
             
-
-
-
-
-            //var orderDetail = await _orderDetailRepository.GetOrderDetailByIdAsync(orderDetailId);
-            //var statusOrderId = await _orderDetailRepository.GetStatusOrderIdByOrderDetailId(orderDetailId);
-            //if (orderDetail == null)
-            //{
-            //    return false; // Không tìm thấy OrderDetail
-            //}
-
-
-
-
-
-            //// Kiểm tra trạng thái đơn hàng và áp dụng logic kiểm tra
-            //// Lấy trạng thái dưới dạng Task<Guid>
-            //var readyToWashingStatusId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnum.READY_TO_WASHING);
-            //var shipperIsComingStatusId = await _statusRepository.FindIdByStatusNameAsync(StatusOrderEnum.SHIPPER_IS_COMING);
-
-            //// Kiểm tra trạng thái đơn hàng và áp dụng logic kiểm tra
-
-            //if ((statusOrderId != readyToWashingStatusId) && (statusOrderId != shipperIsComingStatusId))
-            //{
-            //    return false; // Không thể cập nhật chế độ giặt cho đơn hàng này ở trạng thái hiện tại
-            //}
-
-            //orderDetail.StoreServiceId = newStoreServiceId;
-
-            //await _orderDetailRepository.UpdateOrderDetailAsync(orderDetail);
-
-            //return true;
         }
 
         #region Private Method

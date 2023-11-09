@@ -1,4 +1,5 @@
 ﻿using TeamSolution.Model;
+using TeamSolution.ViewModel.OrderDetail;
 
 namespace TeamSolution.Service.Interface
 {
@@ -6,5 +7,6 @@ namespace TeamSolution.Service.Interface
     {
         Task<bool> CreateOrderDetailServiceAsync(OrderDetail orderDetail);
         Task<bool> UpdateOrderDetailStoreServiceIdAsync(Guid orderDetailId, Guid newStoreServiceId);
+        Task<ICollection<GetOrderDetailByOrderIdReqDto>> GetOrderDetailByOrderIdServiceAsync(Guid orderId);
     }
 }

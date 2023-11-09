@@ -272,7 +272,7 @@ namespace TeamSolution.Controllers
             {
                 var result = await _orderService.GetListOrderByHttpsClientServiceAsync(statusOrder);
                 return StatusCode(200, result);
-            } catch (Exception e)
+            } catch (Exception)
             {
                 return StatusCode(500, ErrorCode.SERVER_ERROR);
             }

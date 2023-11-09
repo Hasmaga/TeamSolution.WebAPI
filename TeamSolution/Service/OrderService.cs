@@ -182,10 +182,10 @@ namespace TeamSolution.Service
             //Kiểm dữ liệu của order
             var order = await GetOrderByIdServiceAsync(orderId);
             var currentState = await _statusRepository.GetStatusNameByStatusIdRepositoryAsync(order.StatusOrderId);
-            if(currentState == null)
+            if (currentState == null)
             {
                 throw new Exception(ResponseCodeConstantsOrder.UPDATE_ORDER_FAILED);
-            }
+            }        
             //kiểm xem order có thuộc cửa hàng hay không
             if(userLogged.StoreId != order.StoreId)
             {

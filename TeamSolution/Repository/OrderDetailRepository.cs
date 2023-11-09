@@ -69,5 +69,20 @@ namespace TeamSolution.Repository
                 throw;
             }
         }
+
+        public async Task<ICollection<OrderDetail>> GetListOrderDetailByOrderIdRepositoryAsync(Guid orderId)
+        {
+            _logger.LogInformation("GetListOrderDetailByOrderIdRepositoryAsync");
+            try
+            {
+                var orderDetails = await _context.OrderDetails.Where(x => x.OrderId == orderId).ToListAsync();
+                return orderDetails;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error Get List Order Detail At Repository: " + ex.ToString());
+                throw;
+            }
+        }
     }
 }
